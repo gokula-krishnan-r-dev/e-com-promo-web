@@ -68,7 +68,7 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
   // Function to fetch credits from the API
   const fetchCredits = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/credits?${new URLSearchParams(
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/credits?${new URLSearchParams(
         filters
       )}`
     );
