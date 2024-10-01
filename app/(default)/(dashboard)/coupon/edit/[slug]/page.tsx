@@ -1,8 +1,6 @@
 "use client";
 import AnniversayCouponForm from "@/components/shared/coupon/form/anniversary-coupon-form";
 import BirthdayCouponForm from "@/components/shared/coupon/form/birthdate-coupon-form";
-import CreditForm from "@/components/shared/coupon/form/credit-form";
-import DiscountForm from "@/components/shared/coupon/form/discount-form";
 import GeneCouponForm from "@/components/shared/coupon/form/gene-coupon-form";
 import HeaderWrapper from "@/components/shared/coupon/header-wrapper";
 import DynamicTabs from "@/components/shared/coupon/tabs";
