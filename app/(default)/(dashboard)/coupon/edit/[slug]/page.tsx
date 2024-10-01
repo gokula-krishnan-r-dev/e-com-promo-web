@@ -13,10 +13,10 @@ import { useQuery } from "react-query";
 function Page({ params }: { params: { slug: string } }) {
   const { data, error } = useQuery("discount", async () => {
     const response = await fetch(
-      `http://localhost:8080/api/v1/coupons/${params.slug}`
+      `https://e-com-promo-api.vercel.app/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
-    return data ;
+    return data;
   });
 
   if (error) return <div>Something went wrong...</div>;

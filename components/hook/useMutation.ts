@@ -59,17 +59,20 @@ export const useMutation = <T, V>(
         // Determine if the request payload is FormData
         const isFormData = variables instanceof FormData;
 
-        const response = await fetch("http://localhost:8080/api/v1" + url, {
-          ...options,
-          method,
-          body: isFormData ? variables : JSON.stringify(variables),
-          headers: {
-            ...(!isFormData && { "Content-Type": "application/json" }), // Only set Content-Type if not FormData
-            ...options?.headers,
-            Cookie: cookieHeader, // Include cookies in the request
-            Authorization: `Bearer ${accessToken}`, // Add Authorization header with token if needed
-          },
-        });
+        const response = await fetch(
+          "https://e-com-promo-api.vercel.app/api/v1" + url,
+          {
+            ...options,
+            method,
+            body: isFormData ? variables : JSON.stringify(variables),
+            headers: {
+              ...(!isFormData && { "Content-Type": "application/json" }), // Only set Content-Type if not FormData
+              ...options?.headers,
+              Cookie: cookieHeader, // Include cookies in the request
+              Authorization: `Bearer ${accessToken}`, // Add Authorization header with token if needed
+            },
+          }
+        );
 
         const result: any = await response.json();
 
