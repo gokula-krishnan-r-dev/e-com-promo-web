@@ -8,15 +8,169 @@ const Sidebar = () => {
           <div className="flex items-center justify-between p-2 border-2 rounded-[10px] border-[#EEEEEE]">
             <div className="flex items-center gap-3 justify-start">
               <div className="h-[40px] w-[40px] rounded-full">
-                <img
-                  src="/favicon.svg"
-                  alt=""
-                  className="object-cover w-[100%] h-[100%]"
-                />
+                <svg
+                  width="49"
+                  height="51"
+                  viewBox="0 0 49 51"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    x="4"
+                    y="3"
+                    width="40"
+                    height="40"
+                    rx="20"
+                    fill="#434CE7"
+                  />
+                  <rect
+                    x="2.75"
+                    y="1.75"
+                    width="42.5"
+                    height="42.5"
+                    rx="21.25"
+                    stroke="#434CE7"
+                    stroke-opacity="0.3"
+                    stroke-width="2.5"
+                  />
+                  <g filter="url(#filter0_d_175_4506)">
+                    <rect
+                      opacity="0.5"
+                      width="12.8075"
+                      height="12.8075"
+                      rx="2.35294"
+                      transform="matrix(0.965916 -0.258855 -0.258855 0.965916 20.7903 20.041)"
+                      fill="white"
+                    />
+                    <rect
+                      width="12.8075"
+                      height="12.8075"
+                      rx="2.35294"
+                      transform="matrix(0.965916 -0.258855 -0.258855 0.965916 17.6533 16.9033)"
+                      fill="url(#paint0_linear_175_4506)"
+                    />
+                  </g>
+                  <g filter="url(#filter1_d_175_4506)">
+                    <g clip-path="url(#clip0_175_4506)">
+                      <path
+                        d="M45.4 47C30.6 52.6 14.9 46 8.90002 42L10.4 45.5C13.6 53.9 26.7334 54.6667 32.9 54C36.1 54.8 41.2334 51.6667 43.4 50L45.4 47Z"
+                        fill="#2D35C6"
+                      />
+                      <path
+                        d="M45.4 47C30.6 52.6 14.9 46 8.90002 42L10.4 45.5C13.6 53.9 26.7334 54.6667 32.9 54C36.1 54.8 41.2334 51.6667 43.4 50L45.4 47Z"
+                        fill="#2D35C6"
+                      />
+                    </g>
+                    <rect
+                      x="4.90002"
+                      y="3.5"
+                      width="39"
+                      height="39"
+                      rx="19.5"
+                      stroke="#3C45D7"
+                      shape-rendering="crispEdges"
+                    />
+                  </g>
+                  <defs>
+                    <filter
+                      id="filter0_d_175_4506"
+                      x="11.75"
+                      y="14"
+                      width="24"
+                      height="24"
+                      filterUnits="userSpaceOnUse"
+                      color-interpolation-filters="sRGB"
+                    >
+                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                      <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                      />
+                      <feOffset dy="3" />
+                      <feGaussianBlur stdDeviation="1.5" />
+                      <feComposite in2="hardAlpha" operator="out" />
+                      <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+                      />
+                      <feBlend
+                        mode="normal"
+                        in2="BackgroundImageFix"
+                        result="effect1_dropShadow_175_4506"
+                      />
+                      <feBlend
+                        mode="normal"
+                        in="SourceGraphic"
+                        in2="effect1_dropShadow_175_4506"
+                        result="shape"
+                      />
+                    </filter>
+                    <filter
+                      id="filter1_d_175_4506"
+                      x="0.400024"
+                      y="3"
+                      width="48"
+                      height="48"
+                      filterUnits="userSpaceOnUse"
+                      color-interpolation-filters="sRGB"
+                    >
+                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                      <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                      />
+                      <feOffset dy="4" />
+                      <feGaussianBlur stdDeviation="2" />
+                      <feComposite in2="hardAlpha" operator="out" />
+                      <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+                      />
+                      <feBlend
+                        mode="normal"
+                        in2="BackgroundImageFix"
+                        result="effect1_dropShadow_175_4506"
+                      />
+                      <feBlend
+                        mode="normal"
+                        in="SourceGraphic"
+                        in2="effect1_dropShadow_175_4506"
+                        result="shape"
+                      />
+                    </filter>
+                    <linearGradient
+                      id="paint0_linear_175_4506"
+                      x1="6.40376"
+                      y1="0"
+                      x2="6.40376"
+                      y2="12.8075"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#CDCFFF" />
+                      <stop offset="1" stop-color="#DCDEFF" />
+                    </linearGradient>
+                    <clipPath id="clip0_175_4506">
+                      <rect
+                        x="4.40002"
+                        y="3"
+                        width="40"
+                        height="40"
+                        rx="20"
+                        fill="white"
+                      />
+                    </clipPath>
+                  </defs>
+                </svg>
               </div>
               <div className="flex items-start justify-start flex-col ">
-                <h1 className="font-medium text-[20px]">honeycomb</h1>
-                <p className="text-[14px] text-[#4A5367]">Content Management</p>
+                <h1 className="font-medium text-[18px]">honeycomb</h1>
+                <p className="text-[14px] text-[#4A5367]">
+                  Promotion Management
+                </p>
               </div>
             </div>
             <div>
@@ -40,11 +194,163 @@ const Sidebar = () => {
         <div className="fixed bottom-0 left-0 right-auto bg-white w-[300px] p-5 border-t-[#EAECF0]  border-t-2  flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-[40px] h-[40px] rounded-full">
-              <img
-                src="/images/avator.png"
-                className="w-[40px] h-[40px] rounded-full"
-                alt=""
-              />
+              <svg
+                width="49"
+                height="51"
+                viewBox="0 0 49 51"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="4"
+                  y="3"
+                  width="40"
+                  height="40"
+                  rx="20"
+                  fill="#434CE7"
+                />
+                <rect
+                  x="2.75"
+                  y="1.75"
+                  width="42.5"
+                  height="42.5"
+                  rx="21.25"
+                  stroke="#434CE7"
+                  stroke-opacity="0.3"
+                  stroke-width="2.5"
+                />
+                <g filter="url(#filter0_d_175_4506)">
+                  <rect
+                    opacity="0.5"
+                    width="12.8075"
+                    height="12.8075"
+                    rx="2.35294"
+                    transform="matrix(0.965916 -0.258855 -0.258855 0.965916 20.7903 20.041)"
+                    fill="white"
+                  />
+                  <rect
+                    width="12.8075"
+                    height="12.8075"
+                    rx="2.35294"
+                    transform="matrix(0.965916 -0.258855 -0.258855 0.965916 17.6533 16.9033)"
+                    fill="url(#paint0_linear_175_4506)"
+                  />
+                </g>
+                <g filter="url(#filter1_d_175_4506)">
+                  <g clip-path="url(#clip0_175_4506)">
+                    <path
+                      d="M45.4 47C30.6 52.6 14.9 46 8.90002 42L10.4 45.5C13.6 53.9 26.7334 54.6667 32.9 54C36.1 54.8 41.2334 51.6667 43.4 50L45.4 47Z"
+                      fill="#2D35C6"
+                    />
+                    <path
+                      d="M45.4 47C30.6 52.6 14.9 46 8.90002 42L10.4 45.5C13.6 53.9 26.7334 54.6667 32.9 54C36.1 54.8 41.2334 51.6667 43.4 50L45.4 47Z"
+                      fill="#2D35C6"
+                    />
+                  </g>
+                  <rect
+                    x="4.90002"
+                    y="3.5"
+                    width="39"
+                    height="39"
+                    rx="19.5"
+                    stroke="#3C45D7"
+                    shape-rendering="crispEdges"
+                  />
+                </g>
+                <defs>
+                  <filter
+                    id="filter0_d_175_4506"
+                    x="11.75"
+                    y="14"
+                    width="24"
+                    height="24"
+                    filterUnits="userSpaceOnUse"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feColorMatrix
+                      in="SourceAlpha"
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                      result="hardAlpha"
+                    />
+                    <feOffset dy="3" />
+                    <feGaussianBlur stdDeviation="1.5" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in2="BackgroundImageFix"
+                      result="effect1_dropShadow_175_4506"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in="SourceGraphic"
+                      in2="effect1_dropShadow_175_4506"
+                      result="shape"
+                    />
+                  </filter>
+                  <filter
+                    id="filter1_d_175_4506"
+                    x="0.400024"
+                    y="3"
+                    width="48"
+                    height="48"
+                    filterUnits="userSpaceOnUse"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feColorMatrix
+                      in="SourceAlpha"
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                      result="hardAlpha"
+                    />
+                    <feOffset dy="4" />
+                    <feGaussianBlur stdDeviation="2" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in2="BackgroundImageFix"
+                      result="effect1_dropShadow_175_4506"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in="SourceGraphic"
+                      in2="effect1_dropShadow_175_4506"
+                      result="shape"
+                    />
+                  </filter>
+                  <linearGradient
+                    id="paint0_linear_175_4506"
+                    x1="6.40376"
+                    y1="0"
+                    x2="6.40376"
+                    y2="12.8075"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#CDCFFF" />
+                    <stop offset="1" stop-color="#DCDEFF" />
+                  </linearGradient>
+                  <clipPath id="clip0_175_4506">
+                    <rect
+                      x="4.40002"
+                      y="3"
+                      width="40"
+                      height="40"
+                      rx="20"
+                      fill="white"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
             </div>
             <div>
               <h3 className="font-semibold">Olivia Rhye</h3>
@@ -97,7 +403,7 @@ const Nav: React.FC<any> = ({ items }) => {
           >
             <div className="flex gap-3 items-center w-[100%]">
               {item.icon}
-              <span className="text-[#0A1215]">{item.label}</span>
+              <span className="text-[#0A1215] text-sm">{item.label}</span>
             </div>
           </Link>
         ))}

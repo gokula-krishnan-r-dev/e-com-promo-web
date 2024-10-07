@@ -55,7 +55,9 @@ const formSchema = Joi.object({
   description: Joi.string().required().messages({
     "string.base": "Description must be a string.",
   }),
-
+  userIds: Joi.any().required().messages({
+    "any.required": "User IDs are required.",
+  }),
   status: Joi.string().valid("ACTIVE", "INACTIVE").required().messages({
     "any.required": "Status is required.",
     "any.only": 'Status must be either "active" or "inactive".',
@@ -94,7 +96,6 @@ const BirthdayCouponForm: React.FC = () => {
   };
   console.log(formData, "formData");
 
-  // Static validate function using the predefined Joi schema
   const validate = (): boolean => {
     const { error } = formSchema.validate(formData, { abortEarly: false });
     console.log(error, "error");
@@ -102,7 +103,10 @@ const BirthdayCouponForm: React.FC = () => {
     if (error) {
       const newErrors: ValidationErrors = {};
       error.details.forEach((err) => {
-        newErrors[err.path[0]] = err.message;
+        // Skip userIds validation error
+        if (err.path[0] !== "userIds") {
+          newErrors[err.path[0]] = err.message;
+        }
       });
 
       setErrors(newErrors);
@@ -151,7 +155,7 @@ const BirthdayCouponForm: React.FC = () => {
           if (response.status === 201) {
             // Show a success toast message
             toast.success("Coupon created successfully!");
-            router.back();
+            // router.back();
           }
         },
         onError: (error) => {
@@ -269,9 +273,6 @@ const BirthdayCouponForm: React.FC = () => {
               </div>
             </div>
           );
-        }
-        if (field.type === "userList") {
-          return <UserList />;
         }
 
         return (
@@ -437,6 +438,7 @@ const BirthdayCouponForm: React.FC = () => {
           </div>
         );
       })}
+
       <div className="flex justify-center items-center px-4 pb-4 gap-4">
         <button
           type="button"

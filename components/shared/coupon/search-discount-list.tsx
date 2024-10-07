@@ -12,6 +12,16 @@ import {
 } from "@/components/ui/select";
 import { useCouponContext } from "@/components/hook/CouponContext";
 import { useDiscountContext } from "@/components/hook/discountContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 interface SearchCouponProps {
   filters: any[];
@@ -30,6 +40,7 @@ const SearchDiscount: React.FC<SearchCouponProps> = ({ filters, onSearch }) => {
   const { searchDiscounts, setFilters, filtersD, refetch } =
     useDiscountContext();
   const [formValues, setFormValues] = useState<Record<string, string>>({});
+  console.log(formValues, "formValues");
 
   const handleInputChange = (name: string, value: string) => {
     setFormValues((prevValues) => ({
@@ -87,6 +98,47 @@ const SearchDiscount: React.FC<SearchCouponProps> = ({ filters, onSearch }) => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+              </div>
+            ) : filter.type === "date" ? (
+              <div>
+                <label className="block pb-1 text-sm font-semibold">
+                  {filter.label}
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[280px] justify-start text-left font-normal",
+                        !formValues[filter.name] && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formValues[filter.name] ? (
+                        format(new Date(formValues[filter.name]), "PPP")
+                      ) : (
+                        <span>{filter.placeholder || "Pick a date"}</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        formValues[filter.name]
+                          ? new Date(formValues[filter.name])
+                          : undefined
+                      }
+                      onSelect={(date) =>
+                        handleInputChange(
+                          filter.name,
+                          date ? date.toISOString() : ""
+                        )
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             ) : (
               <InputField

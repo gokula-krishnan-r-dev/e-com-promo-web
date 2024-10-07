@@ -30,8 +30,8 @@ export const formFields: FormField[] = [
     placeholder: "Enter coupon code",
     required: true,
     options: [
-      { value: "flat_discount", label: "Flat Discount" },
-      { value: "free_shipping", label: "Free shipping" },
+      { value: "FLAT_DISCOUNT", label: "Flat Discount" },
+      { value: "FREE_SHIPPING", label: "Free shipping" },
     ],
     validation: {
       errorMessage: "Coupon code must be between 3 and 10 characters long.",
@@ -143,8 +143,8 @@ export const formFields: FormField[] = [
     id: "validOnProducts",
     options: [
       { value: "ALL_PRODUCTS", label: "All Products" },
-      { value: "SPECIFIC_PRODUCT", label: "Specific Product" },
-      { value: "SPECIFIC_MODULE", label: "Specific Module" },
+      { value: "SPECIFIC_CATEGORY", label: "Specific Categories" },
+      { value: "SPECIFIC_PRODUCT", label: "Single Product" },
     ],
     required: true,
     validation: {

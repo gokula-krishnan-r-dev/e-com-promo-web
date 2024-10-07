@@ -30,7 +30,7 @@ const page = () => {
       <div className="">
         <HeaderWrapper title="Coupon" button={<AddCouponButton />}>
           <div className="px-1 w-full py-3">
-            <DynamicTabs defaultValue="birthday" tabs={tabData} />
+            <DynamicTabs defaultValue="general" tabs={tabData} />
           </div>
         </HeaderWrapper>
       </div>

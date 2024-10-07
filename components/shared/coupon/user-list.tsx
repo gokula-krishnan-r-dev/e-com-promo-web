@@ -14,7 +14,8 @@ import { filters, userFilters } from "@/content/coupon/search-filter";
 import SearchUser from "./search-user-list";
 import { userListC } from "@/content/coupon/user";
 import { ScrollArea } from "@/components/ui/scroll-area";
-const UserList = () => {
+import { Close } from "@radix-ui/react-dialog";
+const UserList = ({ setFormData, formData }: any) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const handleSearch = (values: Record<string, string>) => {
     console.log("Search Values:", values);
@@ -74,11 +75,19 @@ const UserList = () => {
               <div className="grid gap-4 py-4">
                 <ScrollArea className="h-[60vh]">
                   <SearchUser filters={userFilters} onSearch={handleSearch} />
-                  <UserListWithSelect />
+                  <UserListWithSelect
+                    setFormData={setFormData}
+                    formData={formData}
+                  />
                 </ScrollArea>
               </div>
               <DialogFooter>
-                <Button type="submit">Save changes</Button>
+                <Close
+                  type="submit"
+                  className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
+                >
+                  Save changes
+                </Close>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -97,44 +106,69 @@ const UserList = () => {
 
 export default UserList;
 
-const UserListWithSelect = () => {
+export const UserListWithSelect = ({ setFormData, formData }: any) => {
   return (
     <div className="px-4">
       {userListC.map((user: any) => (
-        <div className="border mt-3 rounded-xl ">
+        <div className="border mt-3 rounded-xl" key={user._id}>
           <div className="bg-[#F2F2F3] rounded-t-xl justify-between px-4 flex items-center text-[#4A5367] gap-3 py-2">
             <div className="flex items-center gap-2">
               <input
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    // Add user ID to the array
+                    setFormData({
+                      ...formData,
+                      userIds: [...(formData.userIds || []), user._id], // Ensure `userIds` is an array
+                    });
+                  } else {
+                    // Remove user ID from the array
+                    setFormData({
+                      ...formData,
+                      userIds: formData.userIds.filter(
+                        (id: string) => id !== user._id
+                      ),
+                    });
+                  }
+                }}
                 type="checkbox"
                 className="border rounded-2xl border-gray-100"
-                name={user.loginName}
-                id={user.loginName}
+                name={user._id}
+                id={user._id}
+                checked={formData.userIds?.includes(user._id)} // Keep the checkbox checked if the ID is in the array
               />
-              <h2 className="text-sm font-semibold">{user.loginName}</h2>
+              <h2 className="text-sm font-semibold">
+                {user.userInfo[0].custName} {user.userInfo[0].custLastName}
+              </h2>
             </div>
             <div className="">
               <h1 className="text-sm font-semibold">
                 Account Status:{" "}
-                <span className="text-sm font-medium">{user.status}</span>
+                <span className="text-sm font-medium">
+                  {user?.userInfo[0]?.status}
+                </span>
               </h1>
             </div>
-            <div className=""></div>
           </div>
-          <div className="px-4  text-sm text-[#4A5367] font-medium py-4">
-            <p>
-              <span className="font-semibold">Address</span> <br />
-              1234, Palm Tree Way,Suite 101, <br /> Los Angeles, <br /> CA 90017
+          <div className="px-4 text-sm text-[#4A5367] font-medium py-4">
+            <p className="flex flex-col">
+              <span className="font-semibold">Address</span>{" "}
+              <span className="pl-4">
+                <br />
+                {user.shipAddr[0].addr1}, <br /> {user.shipAddr[0].state},{" "}
+                <br /> {user.shipAddr[0].city},
+                <br /> {user.shipAddr[0].countryName}, <br />{" "}
+                {user.shipAddr[0].zip}
+              </span>
             </p>
             <br />
-            <p>
+            <p className="gap-2 flex">
               <span className="font-semibold">Ph:</span>
-
-              {user.phone}
+              {user.userInfo[0].phone}
             </p>
-            <p>
+            <p className="gap-2 flex">
               <span className="font-semibold">Email:</span>
-
-              {user.email}
+              {user.userId}
             </p>
           </div>
         </div>

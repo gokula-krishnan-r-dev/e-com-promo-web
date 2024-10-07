@@ -93,6 +93,7 @@ export const creditFormValidation = Joi.object({
   startDate: Joi.date().required().label("Start Date"),
   endDate: Joi.date().required().label("End Date"),
   user: Joi.string().required().label("User"),
+  userIds: Joi.array().items(Joi.string()).label("User IDs"),
   status: Joi.string().required().label("Status"),
   remarks: Joi.string().required().min(3).max(100).label("Remarks"),
 });

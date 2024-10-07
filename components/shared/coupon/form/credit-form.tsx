@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -17,6 +17,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
@@ -29,6 +38,11 @@ import {
   creditFormValidation,
 } from "@/content/credit/credit-content";
 import { useCreditContext } from "@/components/hook/creditContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import SearchUser from "../search-user-list";
+import { UserListWithSelect } from "../user-list";
+import { Close } from "@radix-ui/react-dialog";
+import { userFilters } from "@/content/coupon/search-filter";
 // Define types for form data and validation errors
 interface ValidationErrors {
   [key: string]: string;
@@ -67,6 +81,9 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
       ...formData,
       [name]: value,
     });
+  };
+  const handleSearch = (values: Record<string, string>) => {
+    console.log("Search Values:", values);
   };
   console.log(formData, "formData");
   const skipFields = [
@@ -116,7 +133,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
     setErrors({});
     return true;
   };
-
+  const [isOpen, setIsOpen] = React.useState(false);
   // Generate a random coupon code
   const generateCouponCode = () => {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -137,6 +154,12 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
       setFormData({ ...formData, couponCode: "", couponMethod: value });
     }
   };
+
+  useEffect(() => {
+    if (formData.user === "SELECTED") {
+      setIsOpen(true);
+    }
+  }, [formData.user]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -529,6 +552,41 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
           </div>
         );
       })}
+
+      {formData.user === "SELECTED" && (
+        <div className="">
+          <Dialog open={isOpen}>
+            <DialogContent className="sm:max-w-[925px]">
+              <DialogHeader>
+                <DialogTitle>
+                  Users whose Birthday falls in the September Month
+                </DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you're
+                  done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <ScrollArea className="h-[60vh]">
+                  <SearchUser filters={userFilters} onSearch={handleSearch} />
+                  <UserListWithSelect
+                    setFormData={setFormData}
+                    formData={formData}
+                  />
+                </ScrollArea>
+              </div>
+              <DialogFooter>
+                <Close
+                  onClick={() => setIsOpen(false)}
+                  className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
+                >
+                  Save changes
+                </Close>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
       <div className="flex justify-center items-center px-4 pb-4 gap-4">
         <button
           type="button"
