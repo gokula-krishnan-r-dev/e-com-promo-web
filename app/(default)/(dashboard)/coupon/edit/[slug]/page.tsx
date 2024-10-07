@@ -11,7 +11,7 @@ import { useQuery } from "react-query";
 function Page({ params }: { params: { slug: string } }) {
   const { data, error } = useQuery("discount", async () => {
     const response = await fetch(
-      `http://localhost:8080/api/v1/coupons/${params.slug}`
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
     return data;
