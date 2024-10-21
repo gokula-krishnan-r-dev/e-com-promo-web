@@ -32,7 +32,7 @@ const ProductCard: React.FC<{
     <div className="border rounded-lg shadow-lg overflow-hidden bg-white hover:shadow-2xl transition-shadow duration-300">
       <img
         className="w-full h-64 object-cover"
-        src={`http://localhost:8080/uploads/${defaultImage}`} // Update image URL if necessary
+        src={`https://e-com-promo-api-57xi.vercel.app/uploads/${defaultImage}`} // Update image URL if necessary
         alt={product.prodName}
       />
       <div className="p-4">

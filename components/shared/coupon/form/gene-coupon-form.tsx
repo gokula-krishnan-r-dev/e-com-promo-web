@@ -97,6 +97,9 @@ const formSchema = Joi.object({
   product: Joi.array().items(Joi.any()).optional().messages({
     "array.base": "Product must be and array.",
   }),
+  description: Joi.string().required().messages({
+    "any.required": "Description is required.",
+  }),
   status: Joi.string().valid("ACTIVE", "INACTIVE").required().messages({
     "any.required": "Status is required.",
     "any.only": 'Status must be either "active" or "inactive".',
@@ -437,8 +440,6 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
           );
         }
 
-        
-
         return (
           <div key={field.name}>
             <label
@@ -563,6 +564,19 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            ) : field.type === "textarea" ? (
+              <div className="">
+                <textarea
+                  cols={30}
+                  rows={5}
+                  id={field.id}
+                  name={field.name}
+                  value={formData[field.name] as string}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className="border p-2 text-sm rounded-lg w-full"
+                />
+              </div>
             ) : (
               <div className="relative flex items-center gap-12">
                 {field.name === "minimumPurchase" && (

@@ -137,17 +137,69 @@ const BirthdayCouponForm: React.FC = () => {
       setFormData({ ...formData, couponCode: "", couponMethod: value });
     }
   };
+  function getStartEndDate(birthdayMonth: string): {
+    startDate: string;
+    endDate: string;
+  } {
+    // Map of month names to their corresponding numeric values
+    const monthMap: { [key: string]: number } = {
+      january: 0,
+      february: 1,
+      march: 2,
+      april: 3,
+      may: 4,
+      june: 5,
+      july: 6,
+      august: 7,
+      september: 8,
+      october: 9,
+      november: 10,
+      december: 11,
+    };
+
+    // Convert the month string to lowercase to ensure case-insensitivity
+    const monthKey = birthdayMonth.toLowerCase();
+
+    // Get the numeric value for the month
+    const monthNumber = monthMap[monthKey];
+
+    // Check if the month is valid
+    if (monthNumber === undefined) {
+      throw new Error(`Invalid month: ${birthdayMonth}`);
+    }
+
+    const currentYear = new Date().getFullYear();
+
+    // Create a date object for the first day of the selected month
+    const startDate = new Date(currentYear, monthNumber, 1);
+
+    // Calculate the last day of the month
+    const lastDay = new Date(currentYear, monthNumber + 1, 0).getDate();
+
+    // Create a date object for the last day of the selected month
+    const endDate = new Date(currentYear, monthNumber, lastDay);
+
+    // Return the dates in ISO format
+    return {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    };
+  }
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const birthdayMonth = 6; // June
+    const { startDate, endDate } = getStartEndDate(formData?.birthdayMonth);
     if (validate()) {
       const generatedCode = generateCouponCode();
+
       const final = {
         ...formData,
         couponType: "BIRTHDAY",
         couponCode: generatedCode,
+        startDate,
+        endDate,
       };
 
       mutate(final, "POST", {
@@ -155,7 +207,7 @@ const BirthdayCouponForm: React.FC = () => {
           if (response.status === 201) {
             // Show a success toast message
             toast.success("Coupon created successfully!");
-            // router.back();
+            router.back();
           }
         },
         onError: (error) => {
@@ -273,6 +325,10 @@ const BirthdayCouponForm: React.FC = () => {
               </div>
             </div>
           );
+        }
+
+        if (field.type === "userList") {
+          return <UserList setFormData={setFormData} formData={formData} />;
         }
 
         return (

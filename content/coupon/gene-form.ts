@@ -166,6 +166,17 @@ export const formFields: FormField[] = [
     },
   },
   {
+    name: "description",
+    type: "textarea",
+    label: "Description",
+    id: "description",
+    placeholder: "Enter description",
+    required: true,
+    validation: {
+      errorMessage: "Description is required.",
+    },
+  },
+  {
     name: "status",
     type: "radio",
     label: "Status",

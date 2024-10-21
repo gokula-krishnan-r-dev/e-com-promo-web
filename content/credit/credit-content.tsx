@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatDateRange } from "@/lib/formatDateRange";
 import Link from "next/link";
+import { toast } from "sonner";
 
 // Define types for the data
 type CouponData = {
@@ -207,6 +208,7 @@ export const CreditColumnstable: ColumnDef<any>[] = [
             onClick={() => {
               // Implement delete logic here
               console.log("Deleting coupon:", coupon._id);
+              handleToDeleteSelectedRow(coupon._id);
             }}
           >
             <Trash2 size={20} />
@@ -216,3 +218,26 @@ export const CreditColumnstable: ColumnDef<any>[] = [
     },
   },
 ];
+const handleToDeleteSelectedRow = async (id: string) => {
+  // Use Promise.all to handle multiple deletions concurrently
+
+  toast.info("Deleting selected Discount...");
+
+  const response = await fetch(
+    `https://e-com-promo-api-57xi.vercel.app/api/v1/discounts/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  // Check for errors
+  if (!response.ok) {
+    const error = await response.json();
+    toast.error(error.message);
+  }
+
+  const data = await response.json();
+
+  toast.success(data.message || "Successfully deleted");
+  window.location.reload();
+};

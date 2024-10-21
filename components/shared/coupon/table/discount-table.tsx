@@ -23,17 +23,19 @@ import {
 } from "@/components/ui/table";
 import { CouponColumnstable } from "@/content/coupon/coupon-column";
 import { useCouponContext } from "@/components/hook/CouponContext";
+import { cn } from "@/lib/utils";
+import { isBefore, parseISO } from "date-fns";
+import { useDiscountContext } from "@/components/hook/discountContext";
 
 export function DiscountTable({ data, columns }: any) {
-  const { setFilters, filtersC } = useCouponContext();
+  const { setSelectedRow, setRowSelection, rowSelection } =
+    useDiscountContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-
   const table = useReactTable({
     data,
     columns: columns || CouponColumnstable,
@@ -52,6 +54,24 @@ export function DiscountTable({ data, columns }: any) {
       rowSelection,
     },
   });
+
+  React.useEffect(() => {
+    const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+
+    if (selectedRowsArray) {
+      // Loop through selected rows and get their MongoDB `_id` fields
+      const newSelectedIds = selectedRowsArray
+        .map((row: any) => row.original?._id)
+        .filter(Boolean);
+
+      console.log(newSelectedIds, "selectedRowsArray");
+      // Update selected rows list, adding or removing IDs to maintain uniqueness
+      setSelectedRow(new Set(newSelectedIds));
+    } else {
+      // If no rows are selected, reset the selected rows state
+      setSelectedRow([]);
+    }
+  }, [table?.getSelectedRowModel().rows]);
 
   return (
     <div className="w-full">
@@ -80,21 +100,42 @@ export function DiscountTable({ data, columns }: any) {
           </TableHeader>
           <TableBody className="text-center">
             {table?.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell className="text-[#4A5367]" key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row: any) => {
+                // Extract startDate and endDate from the row data
+                const endDate = row.original?.endDate
+                  ? parseISO(row.original.endDate)
+                  : null;
+                const currentDate = new Date();
+
+                // Determine if the row is inactive based on date comparison
+                const isInactive = endDate && isBefore(endDate, currentDate);
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className={cn(
+                      isInactive ? "bg-gray-100 cursor-not-allowed" : "", // Apply bg-gray-100 if inactive
+                      row.getIsSelected() ? "selected-row-class" : "" // Apply selected class if row is selected
+                    )}
+                  >
+                    {row.getVisibleCells().map((cell: any) => (
+                      <TableCell className={cn("text-[#4A5367]")} key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                    {/* Conditionally render "Inactive" if the coupon has expired
+                    {isInactive && (
+                      <TableCell className="text-red-500 font-semibold">
+                        Inactive
+                      </TableCell>
+                    )} */}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell

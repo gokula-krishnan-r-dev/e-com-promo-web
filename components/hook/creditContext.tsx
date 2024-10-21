@@ -23,6 +23,10 @@ interface CreditContextProps {
   refetch: () => void;
   setFilters: (filters: Record<string, any>) => void;
   searchCredits: (filters: Record<string, any>) => void;
+  setRowSelection: (rowSelection: Record<string, any>) => void;
+  rowSelection: Record<string, any>;
+  setSelectedRow: (selectedRow: any) => void;
+  selectedRow: any;
 }
 
 // Create the Credit context
@@ -58,6 +62,8 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [credits, setCredits] = useState<Credit[]>([]);
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
   const [filtersC, setFilters] = useState<any>({
     sortBy: "startDate",
     sortOrder: "desc",
@@ -105,7 +111,17 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
   // Return the context provider with relevant values
   return (
     <CreditContext.Provider
-      value={{ credits, searchCredits, refetch, setFilters, filtersC }}
+      value={{
+        credits,
+        searchCredits,
+        refetch,
+        setFilters,
+        filtersC,
+        setRowSelection,
+        rowSelection,
+        setSelectedRow,
+        selectedRow,
+      }}
     >
       {children}
     </CreditContext.Provider>

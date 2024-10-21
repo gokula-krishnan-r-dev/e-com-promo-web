@@ -5,10 +5,14 @@ import GeneCouponForm from "@/components/shared/coupon/form/gene-coupon-form";
 import HeaderWrapper from "@/components/shared/coupon/header-wrapper";
 import DynamicTabs from "@/components/shared/coupon/tabs";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useQuery } from "react-query";
 
 function Page({ params }: { params: { slug: string } }) {
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("id");
   const { data, error } = useQuery("discount", async () => {
     const response = await fetch(
       `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${params.slug}`
@@ -42,7 +46,7 @@ function Page({ params }: { params: { slug: string } }) {
       <div className="">
         <HeaderWrapper title="Coupon" button={<AddCouponButton />}>
           <div className="px-1 w-full py-3">
-            <DynamicTabs defaultValue="birthday" tabs={tabData} />
+            <DynamicTabs defaultValue={id || "general"} tabs={tabData} />
           </div>
         </HeaderWrapper>
         {/* <div className="px-1 w-full py-3">

@@ -22,8 +22,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CouponColumnstable } from "@/content/coupon/coupon-column";
+import { useCreditContext } from "@/components/hook/creditContext";
 
 export function CreditTable({ data, columns }: any) {
+  const { setSelectedRow } = useCreditContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -50,6 +52,24 @@ export function CreditTable({ data, columns }: any) {
       rowSelection,
     },
   });
+
+  React.useEffect(() => {
+    const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+
+    if (selectedRowsArray) {
+      // Loop through selected rows and get their MongoDB `_id` fields
+      const newSelectedIds = selectedRowsArray
+        .map((row: any) => row.original?._id)
+        .filter(Boolean);
+
+      console.log(newSelectedIds, "selectedRowsArray");
+      // Update selected rows list, adding or removing IDs to maintain uniqueness
+      setSelectedRow(new Set(newSelectedIds));
+    } else {
+      // If no rows are selected, reset the selected rows state
+      setSelectedRow([]);
+    }
+  }, [table?.getSelectedRowModel().rows]);
 
   return (
     <div className="w-full">

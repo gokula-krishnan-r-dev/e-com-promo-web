@@ -116,6 +116,8 @@ export const firstorderDisocuntFormFields: FormField[] = [
 
 import Joi from "joi";
 import Link from "next/link";
+import { isBefore, parseISO } from "date-fns";
+import { toast } from "sonner";
 
 const discountFormSchema = Joi.object({
   cartAmount: Joi.number().min(0).required().messages({
@@ -258,6 +260,43 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
     ),
   },
   {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const endDate = row.original?.endDate
+        ? parseISO(row.original.endDate)
+        : null;
+      const currentDate = new Date();
+
+      // Determine if the row is inactive based on date comparison
+      const isInactive = endDate && isBefore(endDate, currentDate);
+      const status = isInactive ? "Inactive" : "Active";
+
+      // Determine the color to apply based on status
+      const statusColor = status === "Active" ? "green" : "red";
+
+      return (
+        <div
+          className={`capitalize bg-white flex items-center border px-2 py-1 gap-2 rounded-full`}
+        >
+          <svg
+            width="6"
+            height="6"
+            viewBox="0 0 6 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="3" cy="3" r="3" fill={statusColor} />
+          </svg>
+          {/* Capitalize first letter of the status */}
+
+          {status?.charAt(0).toUpperCase() +
+            status?.slice(1).toLocaleLowerCase()}
+        </div>
+      );
+    },
+  },
+  {
     id: "actions",
     enableHiding: false,
     header: () => <div className="text-center">Actions</div>,
@@ -294,6 +333,7 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
             onClick={() => {
               // Implement delete logic here
               console.log("Deleting coupon:", coupon._id);
+              handleToDeleteSelectedRow(coupon._id);
             }}
           >
             <Trash2 size={20} />
@@ -316,3 +356,26 @@ export const firstOrderDiscountColumns = Joi.object({
     "boolean.base": "Active must be a boolean value.",
   }),
 });
+const handleToDeleteSelectedRow = async (id: string) => {
+  // Use Promise.all to handle multiple deletions concurrently
+
+  toast.info("Deleting selected Discount...");
+
+  const response = await fetch(
+    `https://e-com-promo-api-57xi.vercel.app/api/v1/discounts/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  // Check for errors
+  if (!response.ok) {
+    const error = await response.json();
+    toast.error(error.message);
+  }
+
+  const data = await response.json();
+
+  toast.success(data.message || "Successfully deleted");
+  window.location.reload();
+};

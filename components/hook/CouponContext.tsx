@@ -24,6 +24,10 @@ interface CouponContextProps {
   refetch: () => void;
   setFilters: (filters: Record<string, any>) => void;
   searchCoupons: (filters: Record<string, any>) => void;
+  setRowSelection: (rowSelection: Record<string, any>) => void;
+  rowSelection: Record<string, any>;
+  setSelectedRow: (selectedRow: any) => void;
+  selectedRow: any;
 }
 
 const CouponContext = createContext<CouponContextProps | undefined>(undefined);
@@ -66,6 +70,8 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
   const [filtersC, setFilters] = useState<any>({
     filter: "FLAT_DISCOUNT_WITH_MIN",
     sortBy: "createdAt",
@@ -109,10 +115,19 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
     setFilters(value);
     refetch();
   };
-
   return (
     <CouponContext.Provider
-      value={{ coupons, searchCoupons, refetch, setFilters, filtersC }}
+      value={{
+        coupons,
+        searchCoupons,
+        refetch,
+        setFilters,
+        filtersC,
+        setRowSelection,
+        rowSelection,
+        setSelectedRow,
+        selectedRow,
+      }}
     >
       {children}
     </CouponContext.Provider>

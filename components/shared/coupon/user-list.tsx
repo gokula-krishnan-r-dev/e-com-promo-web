@@ -98,7 +98,11 @@ const UserList = ({ setFormData, formData }: any) => {
       </div>
       <div className="flex items-center gap-6">
         <h1>Mail to Customer</h1>
-        <Switch color="blue" id="airplane-mode" />
+        <Switch
+          checked={formData?.userIds?.length > 0}
+          color="blue"
+          id="airplane-mode"
+        />
       </div>
     </div>
   );
@@ -107,6 +111,22 @@ const UserList = ({ setFormData, formData }: any) => {
 export default UserList;
 
 export const UserListWithSelect = ({ setFormData, formData }: any) => {
+  const handleCheckboxChange = (e: any, user: any) => {
+    if (e.target.checked) {
+      // Add user ID to the array
+      setFormData({
+        ...formData,
+        userIds: [...(formData?.userIds || []), user._id], // Ensure `userIds` is an array
+      });
+    } else {
+      // Remove user ID from the array
+      setFormData({
+        ...formData,
+        userIds: formData?.userIds.filter((id: string) => id !== user._id),
+      });
+    }
+  };
+
   return (
     <div className="px-4">
       {userListC.map((user: any) => (
@@ -114,28 +134,12 @@ export const UserListWithSelect = ({ setFormData, formData }: any) => {
           <div className="bg-[#F2F2F3] rounded-t-xl justify-between px-4 flex items-center text-[#4A5367] gap-3 py-2">
             <div className="flex items-center gap-2">
               <input
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    // Add user ID to the array
-                    setFormData({
-                      ...formData,
-                      userIds: [...(formData.userIds || []), user._id], // Ensure `userIds` is an array
-                    });
-                  } else {
-                    // Remove user ID from the array
-                    setFormData({
-                      ...formData,
-                      userIds: formData.userIds.filter(
-                        (id: string) => id !== user._id
-                      ),
-                    });
-                  }
-                }}
                 type="checkbox"
                 className="border rounded-2xl border-gray-100"
                 name={user._id}
                 id={user._id}
-                checked={formData.userIds?.includes(user._id)} // Keep the checkbox checked if the ID is in the array
+                checked={formData?.userIds?.includes(user?._id)} // Keep the checkbox checked if the ID is in the array
+                onChange={(e) => handleCheckboxChange(e, user)}
               />
               <h2 className="text-sm font-semibold">
                 {user.userInfo[0].custName} {user.userInfo[0].custLastName}

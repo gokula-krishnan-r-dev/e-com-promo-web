@@ -56,6 +56,10 @@ const formSchema = Joi.object({
     "string.base": "Description must be a string.",
   }),
 
+  userIds: Joi.any().required().messages({
+    "any.required": "Users are required.",
+  }),
+
   status: Joi.string().valid("ACTIVE", "INACTIVE").required().messages({
     "any.required": "Status is required.",
     "any.only": 'Status must be either "active" or "inactive".',
@@ -135,16 +139,67 @@ const AnniversayCouponForm: React.FC = () => {
     }
   };
 
+  function getStartEndDate(birthdayMonth: string): {
+    startDate: string;
+    endDate: string;
+  } {
+    // Map of month names to their corresponding numeric values
+    const monthMap: { [key: string]: number } = {
+      january: 0,
+      february: 1,
+      march: 2,
+      april: 3,
+      may: 4,
+      june: 5,
+      july: 6,
+      august: 7,
+      september: 8,
+      october: 9,
+      november: 10,
+      december: 11,
+    };
+
+    // Convert the month string to lowercase to ensure case-insensitivity
+    const monthKey = birthdayMonth?.toLowerCase();
+
+    // Get the numeric value for the month
+    const monthNumber = monthMap[monthKey];
+
+    // Check if the month is valid
+    if (monthNumber === undefined) {
+      throw new Error(`Invalid month: ${birthdayMonth}`);
+    }
+
+    const currentYear = new Date().getFullYear();
+
+    // Create a date object for the first day of the selected month
+    const startDate = new Date(currentYear, monthNumber, 1);
+
+    // Calculate the last day of the month
+    const lastDay = new Date(currentYear, monthNumber + 1, 0).getDate();
+
+    // Create a date object for the last day of the selected month
+    const endDate = new Date(currentYear, monthNumber, lastDay);
+
+    // Return the dates in ISO format
+    return {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    };
+  }
+
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const { startDate, endDate } = getStartEndDate(formData?.anniversaryMonth);
     if (validate()) {
       const generatedCode = generateCouponCode();
       const final = {
         ...formData,
         couponType: "ANNIVERSARY",
         couponCode: generatedCode,
+        startDate,
+        endDate,
       };
 
       mutate(final, "POST", {
@@ -271,8 +326,16 @@ const AnniversayCouponForm: React.FC = () => {
             </div>
           );
         }
+
         if (field.type === "userList") {
-          return <UserList />;
+          return (
+            <div className="">
+              <UserList setFormData={setFormData} formData={formData} />
+              {errors["userIds"] && (
+                <p className="text-red-500 pt-1 text-sm">{errors["userIds"]}</p>
+              )}{" "}
+            </div>
+          );
         }
 
         return (

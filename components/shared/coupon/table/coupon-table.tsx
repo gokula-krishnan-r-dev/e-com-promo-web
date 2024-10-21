@@ -22,18 +22,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { isBefore, parseISO } from "date-fns";
+
 import { CouponColumnstable } from "@/content/coupon/coupon-column";
 import { useCouponContext } from "@/components/hook/CouponContext";
+import { cn } from "@/lib/utils";
 
 export function CouponTable({ data, filter, columns }: any) {
-  const { setFilters, filtersC } = useCouponContext();
+  const {
+    setFilters,
+    filtersC,
+    rowSelection,
+    setRowSelection,
+    setSelectedRow,
+  } = useCouponContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
 
   React.useEffect(() => {
     setFilters({
@@ -61,9 +69,26 @@ export function CouponTable({ data, filter, columns }: any) {
     },
   });
 
+  React.useEffect(() => {
+    const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+
+    if (selectedRowsArray && selectedRowsArray.length > 0) {
+      // Loop through selected rows and get their MongoDB `_id` fields
+      const newSelectedIds = selectedRowsArray
+        .map((row: any) => row.original?._id)
+        .filter(Boolean);
+
+      // Update selected rows list, adding or removing IDs to maintain uniqueness
+      setSelectedRow(new Set(newSelectedIds));
+    } else {
+      // If no rows are selected, reset the selected rows state
+      setSelectedRow([]);
+    }
+  }, [table?.getSelectedRowModel().rows]);
+
   return (
     <div className="w-full">
-      <div className="rounded-xl border">
+      <div className="rounded-xl border border-[#EAECF0]">
         <Table>
           <TableHeader className="">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -71,7 +96,7 @@ export function CouponTable({ data, filter, columns }: any) {
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className="text-[#4A5367] font-semibold"
+                      className="text-[#4A5367] bg-[#F9FAFB] font-semibold"
                       key={header.id}
                     >
                       {header.isPlaceholder
@@ -88,21 +113,42 @@ export function CouponTable({ data, filter, columns }: any) {
           </TableHeader>
           <TableBody className="text-center">
             {table?.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell className="text-[#4A5367]" key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row: any) => {
+                // Extract startDate and endDate from the row data
+                const endDate = row.original?.endDate
+                  ? parseISO(row.original.endDate)
+                  : null;
+                const currentDate = new Date();
+
+                // Determine if the row is inactive based on date comparison
+                const isInactive = endDate && isBefore(endDate, currentDate);
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className={cn(
+                      isInactive ? "bg-gray-100 cursor-not-allowed" : "", // Apply bg-gray-100 if inactive
+                      row.getIsSelected() ? "selected-row-class" : "" // Apply selected class if row is selected
+                    )}
+                  >
+                    {row.getVisibleCells().map((cell: any) => (
+                      <TableCell className={cn("text-[#4A5367]")} key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                    {/* Conditionally render "Inactive" if the coupon has expired
+                    {isInactive && (
+                      <TableCell className="text-red-500 font-semibold">
+                        Inactive
+                      </TableCell>
+                    )} */}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell

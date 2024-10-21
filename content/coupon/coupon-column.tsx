@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { ArrowUpDown, Edit2, Eye, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Edit2, Eye, Trash2 } from "lucide-react";
 import { formatDateRange } from "@/lib/formatDateRange";
 import Link from "next/link";
-
+import { Checkbox } from "@/components/ui/checkbox";
+import { isBefore, parseISO } from "date-fns";
+import { toast } from "sonner";
 // Define types for the data
 type CouponData = {
   _id: string;
@@ -25,14 +25,16 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+      <div className="">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
     ),
     cell: ({ row }: { row: Row<CouponData> }) => (
       <Checkbox
@@ -99,22 +101,21 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue<string>("status").toLocaleLowerCase();
+      const endDate = row.original?.endDate
+        ? parseISO(row.original.endDate)
+        : null;
+      const currentDate = new Date();
 
-      // Define dynamic color mapping based on status
-      const statusColors: any = {
-        active: "bg-green-500 text-block",
-        inactive: "bg-gray-500 text-block",
-        pending: "bg-yellow-500 text-white",
-        expired: "bg-red-500 text-white",
-      };
+      // Determine if the row is inactive based on date comparison
+      const isInactive = endDate && isBefore(endDate, currentDate);
+      const status = isInactive ? "Inactive" : row.getValue<string>("status");
 
       // Determine the color to apply based on status
-      const statusColor = statusColors[status] || "bg-blue-500 text-white"; // Fallback for unknown status
+      const statusColor = status === "ACTIVE" ? "green" : "red";
 
       return (
         <div
-          className={`capitalize flex items-center border ${statusColor} px-2 py-1 gap-2 rounded-full`}
+          className={`capitalize bg-white flex items-center border px-2 py-1 gap-2 rounded-full`}
         >
           <svg
             width="6"
@@ -123,10 +124,11 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="3" cy="3" r="3" fill="white" />
+            <circle cx="3" cy="3" r="3" fill={statusColor} />
           </svg>
           {/* Capitalize first letter of the status */}
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+
+          {status.charAt(0).toUpperCase() + status.slice(1).toLocaleLowerCase()}
         </div>
       );
     },
@@ -136,12 +138,35 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
     enableHiding: false,
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
-      const coupon = row.original;
+      const coupon: any = row.original;
+      const generateCouponEditUrl = (coupon: any) => {
+        let idValue = "";
 
+        // Set the idValue based on the couponType
+        switch (coupon.couponType) {
+          case "GENERAL":
+            idValue = "general";
+            break;
+          case "BIRTHDAY":
+            idValue = "birthday";
+            break;
+          case "ANNIVERSARY":
+            idValue = "anniversary";
+            break;
+          default:
+            idValue = ""; // Default value if none matches
+            break;
+        }
+
+        // Construct the URL
+        return `/coupon/edit/${coupon._id}?id=${idValue}`;
+      };
+      const couponEditUrl = generateCouponEditUrl(coupon);
       return (
         <div className="flex items-center gap-2 space-x-2">
           {/* View Button */}
-          <button
+          <Link
+            href={"/coupon/view/" + coupon._id}
             className="w-5"
             onClick={() => {
               // Implement view logic here
@@ -149,11 +174,11 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
             }}
           >
             <Eye size={20} />
-          </button>
+          </Link>
 
           {/* Edit Button */}
           <Link
-            href={`/coupon/edit/${coupon._id}`}
+            href={couponEditUrl}
             onClick={() => {
               // Implement edit logic here
               console.log("Editing coupon:", coupon._id);
@@ -167,6 +192,7 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
             onClick={() => {
               // Implement delete logic here
               console.log("Deleting coupon:", coupon._id);
+              handleToDeleteSelectedRow(coupon._id);
             }}
           >
             <Trash2 size={20} />
@@ -176,3 +202,26 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
     },
   },
 ];
+const handleToDeleteSelectedRow = async (id: string) => {
+  // Use Promise.all to handle multiple deletions concurrently
+
+  toast.info("Deleting selected Discount...");
+
+  const response = await fetch(
+    `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  // Check for errors
+  if (!response.ok) {
+    const error = await response.json();
+    toast.error(error.message);
+  }
+
+  const data = await response.json();
+
+  toast.success(data.message || "Successfully deleted");
+  window.location.reload();
+};

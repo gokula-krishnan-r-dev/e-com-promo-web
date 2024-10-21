@@ -20,6 +20,10 @@ interface DiscountContextProps {
   refetch: () => void;
   setFilters: (filters: Record<string, any>) => void;
   searchDiscounts: (filters: Record<string, any>) => void;
+  setSelectedRow: (selectedRow: any) => void;
+  selectedRow: any;
+  setRowSelection: (rowSelection: Record<string, any>) => void;
+  rowSelection: Record<string, any>;
 }
 
 const DiscountContext = createContext<DiscountContextProps | undefined>(
@@ -55,6 +59,8 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
   const [filtersD, setFilters] = useState<any>({
     sortBy: "startDate",
     sortOrder: "desc",
@@ -98,7 +104,17 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <DiscountContext.Provider
-      value={{ discounts, searchDiscounts, refetch, setFilters, filtersD }}
+      value={{
+        discounts,
+        searchDiscounts,
+        refetch,
+        setFilters,
+        filtersD,
+        setSelectedRow,
+        selectedRow,
+        rowSelection,
+        setRowSelection,
+      }}
     >
       {children}
     </DiscountContext.Provider>
