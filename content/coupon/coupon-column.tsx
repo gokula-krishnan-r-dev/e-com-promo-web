@@ -96,7 +96,6 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
     },
   },
   // Column definition using the formatDateRange function
-
   {
     accessorKey: "status",
     header: "Status",
