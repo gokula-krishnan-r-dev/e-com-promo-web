@@ -27,6 +27,7 @@ import { isBefore, parseISO } from "date-fns";
 import { CouponColumnstable } from "@/content/coupon/coupon-column";
 import { useCouponContext } from "@/components/hook/CouponContext";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export function CouponTable({ data, filter, columns }: any) {
   const {
@@ -35,8 +36,14 @@ export function CouponTable({ data, filter, columns }: any) {
     rowSelection,
     setRowSelection,
     setSelectedRow,
+    setLimit,
+    setPage,
+    limit,
+    page,
+    totalPages,
   } = useCouponContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -86,6 +93,22 @@ export function CouponTable({ data, filter, columns }: any) {
     }
   }, [table?.getSelectedRowModel().rows]);
 
+  const handltoPreviewPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    } else {
+      toast.error("No more pages to load");
+    }
+  };
+
+  const hanldeToNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    } else {
+      toast.error("No more pages to load");
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="rounded-xl border border-[#EAECF0]">
@@ -128,7 +151,7 @@ export function CouponTable({ data, filter, columns }: any) {
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className={cn(
-                      isInactive ? "bg-gray-100 cursor-not-allowed" : "", // Apply bg-gray-100 if inactive
+                      isInactive ? "bg-[#FEF3F2] cursor-not-allowed" : "", // Apply bg-gray-100 if inactive
                       row.getIsSelected() ? "selected-row-class" : "" // Apply selected class if row is selected
                     )}
                   >
@@ -163,27 +186,16 @@ export function CouponTable({ data, filter, columns }: any) {
         </Table>
       </div>
       <div className="flex items-center justify-between w-full  space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+        <div className="space-x-2 ">
+          <Button variant="outline" size="sm" onClick={handltoPreviewPage}>
             Previous
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" size="sm" onClick={hanldeToNextPage}>
             Next
           </Button>
         </div>
-        <div className="flex-1 text-sm text-muted-foreground">
-          Page {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length}
+        <div className="text-sm text-muted-foreground">
+          Page {page} of {totalPages}
         </div>
       </div>
     </div>

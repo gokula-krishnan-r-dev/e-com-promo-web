@@ -23,9 +23,11 @@ import {
 } from "@/components/ui/table";
 import { CouponColumnstable } from "@/content/coupon/coupon-column";
 import { useCreditContext } from "@/components/hook/creditContext";
+import { toast } from "sonner";
 
 export function CreditTable({ data, columns }: any) {
-  const { setSelectedRow } = useCreditContext();
+  const { setSelectedRow, setLimit, setPage, limit, page, totalPages } =
+    useCreditContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -70,7 +72,21 @@ export function CreditTable({ data, columns }: any) {
       setSelectedRow([]);
     }
   }, [table?.getSelectedRowModel().rows]);
+  const handltoPreviewPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    } else {
+      toast.error("No more pages to load");
+    }
+  };
 
+  const hanldeToNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    } else {
+      toast.error("No more pages to load");
+    }
+  };
   return (
     <div className="w-full">
       <div className="rounded-xl border">
@@ -127,27 +143,16 @@ export function CreditTable({ data, columns }: any) {
         </Table>
       </div>
       <div className="flex items-center justify-between w-full  space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+        <div className="space-x-2 ">
+          <Button variant="outline" size="sm" onClick={handltoPreviewPage}>
             Previous
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" size="sm" onClick={hanldeToNextPage}>
             Next
           </Button>
         </div>
-        <div className="flex-1 text-sm text-muted-foreground">
-          Page {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length}
+        <div className="text-sm text-muted-foreground">
+          Page {page} of {totalPages}
         </div>
       </div>
     </div>

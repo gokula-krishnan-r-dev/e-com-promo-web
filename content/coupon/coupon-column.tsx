@@ -73,7 +73,7 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
   },
   {
     accessorKey: "validForCountry",
-    header: "Valid On Products",
+    header: () => <div className="text-center">Country</div>,
     cell: ({ row }) => (
       <div className="capitalize">
         {row.getValue<string>("validForCountry")}
@@ -82,23 +82,32 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
   },
   {
     accessorKey: "useType",
-    header: "Use Type",
+
+    header: () => <div className="text-center">Use Type</div>,
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue<string>("useType")}</div>
     ),
   },
   {
-    accessorKey: "minimumPurchase",
-    header: () => <div className="text-center">Min Purchase</div>,
+    accessorKey: "useCount",
+    header: () => <div className="text-center">Used Count</div>,
     cell: ({ row }) => {
-      const minimumPurchase = row.getValue<number>("minimumPurchase");
-      return <div className="text-center font-medium">${minimumPurchase}</div>;
+      const useCount = row.getValue<number>("useCount") || 0;
+      return <div className="text-center font-medium">{useCount}</div>;
     },
   },
+  // {
+  //   accessorKey: "minimumPurchase",
+  //   header: () => <div className="text-center">Min Purchase</div>,
+  //   cell: ({ row }) => {
+  //     const minimumPurchase = row.getValue<number>("minimumPurchase");
+  //     return <div className="text-center font-medium">${minimumPurchase}</div>;
+  //   },
+  // },
   // Column definition using the formatDateRange function
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
       const endDate = row.original?.endDate
         ? parseISO(row.original.endDate)
@@ -207,7 +216,7 @@ const handleToDeleteSelectedRow = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${id}`,
+    `https://e-com-promo-api.vercel.app/api/v1/coupons/${id}`,
     {
       method: "DELETE",
     }

@@ -1,4 +1,4 @@
-import { symbol } from "joi";
+import { optional, options, symbol } from "joi";
 
 export const filters = [
   {
@@ -12,11 +12,11 @@ export const filters = [
     placeholder: "Select countries",
     type: "select",
     options: [
-      { label: "All Country", value: "ALL" },
+      { label: "All Countries", value: "ALL" },
       { label: "United States", value: "US" },
-      { label: "United Kingdom", value: "UK" },
       { label: "Canada", value: "CA" },
-      { label: "Australia", value: "AU" },
+      { label: "United States/Canada", value: "US/UK" },
+      { label: "Rest of the World", value: "ROW" },
     ],
   },
   {
@@ -39,13 +39,33 @@ export const filters = [
       { label: "Multiple use", value: "MULTIPLE" },
     ],
   },
+  {
+    name: "month",
+    label: "Birthday / Anniversary Month",
+    placeholder: "Select month",
+    type: "select",
+    options: [
+      { label: "January", value: "january" },
+      { label: "February", value: "february" },
+      { label: "March", value: "march" },
+      { label: "April", value: "april" },
+      { label: "May", value: "may" },
+      { label: "June", value: "june" },
+      { label: "July", value: "july" },
+      { label: "August", value: "august" },
+      { label: "September", value: "september" },
+      { label: "October", value: "october" },
+      { label: "November", value: "november" },
+      { label: "December", value: "december" },
+    ],
+  },
 ];
 
 export const discountFilters = [
   {
     label: "Cart Amount",
     name: "cartAmount",
-    placeholder: "Enter coupon code",
+    placeholder: "",
     type: "number",
     isPriceSymbol: true,
     symbol: "$",
@@ -53,7 +73,7 @@ export const discountFilters = [
   {
     label: "Discount %",
     name: "discountPercentage",
-    placeholder: "Select coupon type",
+    placeholder: "",
     type: "number",
     isPriceSymbol: true,
     symbol: "%",
@@ -61,27 +81,27 @@ export const discountFilters = [
   {
     name: "validForCountry",
     label: "Valid for Countries",
-    placeholder: "Select countries",
+    placeholder: "Select ",
     type: "select",
     options: [
-      { label: "All Country", value: "ALL" },
+      { label: "All Countries", value: "ALL" },
       { label: "United States", value: "US" },
-      { label: "United Kingdom", value: "UK" },
       { label: "Canada", value: "CA" },
-      { label: "Australia", value: "AU" },
+      { label: "United States/Canada", value: "US/UK" },
+      { label: "Rest of the World", value: "ROW" },
     ],
   },
   {
     name: "startDate",
     label: "Discount Date From:",
     type: "date",
-    placeholder: "Select start date",
+    placeholder: "Select",
   },
   {
     name: "endDate",
     label: "Discount Date To:",
     type: "date",
-    placeholder: "Select end date",
+    placeholder: "Select",
   },
 ];
 

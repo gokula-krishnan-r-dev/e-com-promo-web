@@ -1,6 +1,5 @@
 import React from "react";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,16 +9,45 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { filters, userFilters } from "@/content/coupon/search-filter";
+import { userFilters } from "@/content/coupon/search-filter";
 import SearchUser from "./search-user-list";
-import { userListC } from "@/content/coupon/user";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Close } from "@radix-ui/react-dialog";
+import { useQuery } from "react-query";
 const UserList = ({ setFormData, formData }: any) => {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+
+  const { data, error, isLoading, refetch } = useQuery(
+    ["users", firstName, lastName],
+    async () => {
+      const params = new URLSearchParams({
+        limit: "1000000000", // You can adjust this value as needed
+      });
+
+      // Adding dynamic filters based on state
+      if (firstName) params.append("filter[firstName]", firstName);
+      if (lastName) params.append("filter[lastName]", lastName);
+
+      const response = await fetch(
+        `https://big-backend.vercel.app/v1/users/?userType=registered_user&${params.toString()}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const data = await response.json();
+      return data.results;
+    }
+  );
   const [isOpen, setIsOpen] = React.useState(false);
   const handleSearch = (values: Record<string, string>) => {
     console.log("Search Values:", values);
+    setFirstName(values.firstName);
+    setLastName(values.lastName);
   };
+  if (error) return <div>Something went wrong...</div>;
   return (
     <div className="border focus:border-gray-600 focus:border  px-2 py-2 flex items-center justify-between rounded-lg">
       <div className="flex justify-between gap-2 items-center">
@@ -76,18 +104,31 @@ const UserList = ({ setFormData, formData }: any) => {
                 <ScrollArea className="h-[60vh]">
                   <SearchUser filters={userFilters} onSearch={handleSearch} />
                   <UserListWithSelect
+                    data={data}
                     setFormData={setFormData}
                     formData={formData}
                   />
                 </ScrollArea>
               </div>
-              <DialogFooter>
-                <Close
-                  type="submit"
-                  className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
-                >
-                  Save changes
-                </Close>
+              <DialogFooter className="">
+                <div className="flex items-center justify-center w-full gap-4">
+                  <div className="">
+                    <Close
+                      className="text-sm border px-4 py-2 rounded-lg font-semibold"
+                      onClick={() => {
+                        setFormData({ ...formData, userIds: [] });
+                      }}
+                    >
+                      Cancel
+                    </Close>
+                  </div>
+                  <Close
+                    type="submit"
+                    className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
+                  >
+                    Add
+                  </Close>{" "}
+                </div>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -110,46 +151,94 @@ const UserList = ({ setFormData, formData }: any) => {
 
 export default UserList;
 
-export const UserListWithSelect = ({ setFormData, formData }: any) => {
+export const UserListWithSelect = ({ setFormData, formData, data }: any) => {
   const handleCheckboxChange = (e: any, user: any) => {
     if (e.target.checked) {
       // Add user ID to the array
       setFormData({
         ...formData,
-        userIds: [...(formData?.userIds || []), user._id], // Ensure `userIds` is an array
+        userIds: [...(formData?.userIds || []), user.id], // Ensure `userIds` is an array
       });
     } else {
       // Remove user ID from the array
       setFormData({
         ...formData,
-        userIds: formData?.userIds.filter((id: string) => id !== user._id),
+        userIds: formData?.userIds.filter((id: string) => id !== user.id),
       });
     }
   };
 
+  const {
+    data: userIds,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery(["ids"], async () => {
+    const response = await fetch(
+      `https://big-backend.vercel.app/v1/users/userIds`
+    );
+
+    const data = await response.json();
+    return data.activeUsers;
+  });
+  console.log(userIds, "userIds");
+
   return (
     <div className="px-4">
-      {userListC.map((user: any) => (
-        <div className="border mt-3 rounded-xl" key={user._id}>
+      <div className="flex items-center cursor-pointer  gap-2 justify-end py-3">
+        <div
+          onClick={() => {
+            setFormData({
+              ...formData,
+              userIds: userIds || [],
+            });
+          }}
+        >
+          <h1 className="text-sm  font-semibold underline">
+            Select all Users{" "}
+          </h1>
+        </div>
+        {" | "}
+        <div
+          onClick={() => {
+            setFormData({
+              ...formData,
+              userIds: [],
+            });
+          }}
+        >
+          <h1 className="text-sm font-semibold underline">
+            {" "}
+            Deselect all Users
+          </h1>
+        </div>
+      </div>
+      {data?.length === 0 && (
+        <div className="text-center text-sm font-medium text-[#4A5367] py-4">
+          No users found
+        </div>
+      )}
+      {data?.map((user: any) => (
+        <div className="border mt-3 rounded-xl" key={user.id}>
           <div className="bg-[#F2F2F3] rounded-t-xl justify-between px-4 flex items-center text-[#4A5367] gap-3 py-2">
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 className="border rounded-2xl border-gray-100"
-                name={user._id}
-                id={user._id}
-                checked={formData?.userIds?.includes(user?._id)} // Keep the checkbox checked if the ID is in the array
+                name={user.id}
+                id={user.id}
+                checked={formData?.userIds?.includes(user?.id)} // Keep the checkbox checked if the ID is in the array
                 onChange={(e) => handleCheckboxChange(e, user)}
               />
               <h2 className="text-sm font-semibold">
-                {user.userInfo[0].custName} {user.userInfo[0].custLastName}
+                {user.firstName} {user.lastName}
               </h2>
             </div>
             <div className="">
               <h1 className="text-sm font-semibold">
                 Account Status:{" "}
                 <span className="text-sm font-medium">
-                  {user?.userInfo[0]?.status}
+                  {user?.resellerStatus}
                 </span>
               </h1>
             </div>
@@ -157,22 +246,23 @@ export const UserListWithSelect = ({ setFormData, formData }: any) => {
           <div className="px-4 text-sm text-[#4A5367] font-medium py-4">
             <p className="flex flex-col">
               <span className="font-semibold">Address</span>{" "}
-              <span className="pl-4">
+              {/* <span className="pl-4">
                 <br />
                 {user.shipAddr[0].addr1}, <br /> {user.shipAddr[0].state},{" "}
                 <br /> {user.shipAddr[0].city},
                 <br /> {user.shipAddr[0].countryName}, <br />{" "}
                 {user.shipAddr[0].zip}
-              </span>
+              </span> */}
             </p>
             <br />
             <p className="gap-2 flex">
               <span className="font-semibold">Ph:</span>
-              {user.userInfo[0].phone}
+              {/* {user.} */}
+              Phone number
             </p>
             <p className="gap-2 flex">
               <span className="font-semibold">Email:</span>
-              {user.userId}
+              {user.email}
             </p>
           </div>
         </div>

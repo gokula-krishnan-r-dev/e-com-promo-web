@@ -3,7 +3,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { ArrowUpDown, Edit2, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formatDateRange } from "@/lib/formatDateRange";
+import { formatDate, formatDateRange } from "@/lib/formatDateRange";
 export const discountFormFields: FormField[] = [
   {
     name: "cartAmount",
@@ -36,10 +36,11 @@ export const discountFormFields: FormField[] = [
     id: "validCountry",
     placeholder: "Select country",
     options: [
-      { value: "ALL", label: "All Countries" },
-      { value: "INDIA", label: "India" },
-      { value: "USA", label: "United States" },
-      { value: "CANADA", label: "Canada" },
+      { label: "All Countries", value: "ALL" },
+      { label: "United States", value: "US" },
+      { label: "Canada", value: "CA" },
+      { label: "United States/Canada", value: "US/UK" },
+      { label: "Rest of the World", value: "ROW" },
     ],
     required: true,
     validation: {
@@ -134,12 +135,12 @@ const discountFormSchema = Joi.object({
   }),
 
   validCountry: Joi.string()
-    .valid("ALL", "INDIA", "USA", "CANADA")
+    .valid("ALL", "US", "CA", "US/UK", "ROW")
     .required()
     .messages({
       "any.required": "Valid Country is required.",
       "any.only":
-        'Valid Country must be one of "ALL", "INDIA", "USA", or "CANADA".',
+        'Valid Country must be one of "ALL", "US", "CA", "US/UK", "ROW"',
     }),
 
   displayOnSite: Joi.boolean().required().messages({
@@ -219,14 +220,14 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
   },
   {
     accessorKey: "validCountry",
-    header: "Valid On Products",
+    header: () => <div className="text-center">Country</div>,
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue<string>("validCountry")}</div>
     ),
   },
   {
     accessorKey: "displayOnSite",
-    header: "Display On Site",
+    header: () => <div className="text-center">Display On Site</div>,
     cell: ({ row }) => (
       <div className="capitalize">
         {row.getValue<string>("displayOnSite") ? (
@@ -261,7 +262,7 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
       const endDate = row.original?.endDate
         ? parseISO(row.original.endDate)
@@ -305,18 +306,6 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
 
       return (
         <div className="flex items-center gap-2 space-x-2">
-          {/* View Button */}
-          <Link
-            href={`/discount/view/${coupon._id}`}
-            className="w-5"
-            onClick={() => {
-              // Implement view logic here
-              console.log("Viewing coupon:", coupon._id);
-            }}
-          >
-            <Eye size={20} />
-          </Link>
-
           {/* Edit Button */}
           <Link
             href={`/discount/edit/${coupon._id}`}
@@ -344,6 +333,192 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
   },
 ];
 
+export const firstOrderDiscount: ColumnDef<any>[] = [
+  // firstName
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }: { row: Row<any> }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "firstName",
+    header: () => <div className="text-center">First Name</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue<string>("firstName")}</div>
+    ),
+  },
+  // lastName
+  {
+    accessorKey: "lastName",
+    header: () => <div className="text-center">Last Name</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue<string>("lastName")}</div>
+    ),
+  },
+
+  //discount
+  {
+    accessorKey: "discountPercentage",
+    header: () => <div className="text-center">Discount</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.getValue<number>("discountPercentage")}%
+      </div>
+    ),
+  },
+  //mailDate
+  {
+    accessorKey: "mailDate",
+    header: () => <div className="text-center">Mail Date</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {formatDate(row.getValue<string>("mailDate"))}
+      </div>
+    ),
+  },
+  //used
+  {
+    accessorKey: "used",
+    header: () => <div className="text-center">Used</div>,
+    cell: ({ row }) => {
+      const isUsered = row.getValue<boolean>("used");
+      return (
+        <div className="text-center flex items-center justify-center">
+          {isUsered ? (
+            <svg
+              width="25"
+              height="24"
+              viewBox="0 0 25 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.5 22C18.0228 22 22.5 17.5228 22.5 12C22.5 6.47715 18.0228 2 12.5 2C6.97715 2 2.5 6.47715 2.5 12C2.5 17.5228 6.97715 22 12.5 22Z"
+                stroke="#17B26A"
+                stroke-width="1.5"
+              />
+              <path
+                d="M9 12.5L11 14.5L16 9.5"
+                stroke="#17B26A"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg
+              width="25"
+              height="24"
+              viewBox="0 0 25 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.5 22C18.0228 22 22.5 17.5228 22.5 12C22.5 6.47715 18.0228 2 12.5 2C6.97715 2 2.5 6.47715 2.5 12C2.5 17.5228 6.97715 22 12.5 22Z"
+                stroke="#F04438"
+                stroke-width="1.5"
+              />
+              <path
+                d="M15 9.50002L10 14.5M10 9.5L15 14.5"
+                stroke="#F04438"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: () => <div className="text-center">Status</div>,
+    cell: ({ row }) => {
+      const endDate = row.original?.endDate
+        ? parseISO(row.original.endDate)
+        : null;
+      const currentDate = new Date();
+
+      // Determine if the row is inactive based on date comparison
+      const isInactive = endDate && isBefore(endDate, currentDate);
+      const status = isInactive ? "Inactive" : "Active";
+
+      // Determine the color to apply based on status
+      const statusColor = status === "Active" ? "green" : "red";
+
+      return (
+        <div
+          className={`capitalize bg-white flex items-center border px-2 py-1 gap-2 rounded-full`}
+        >
+          <svg
+            width="6"
+            height="6"
+            viewBox="0 0 6 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="3" cy="3" r="3" fill={statusColor} />
+          </svg>
+          {/* Capitalize first letter of the status */}
+
+          {status?.charAt(0).toUpperCase() +
+            status?.slice(1).toLocaleLowerCase()}
+        </div>
+      );
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    header: () => <div className="text-center">Actions</div>,
+    cell: ({ row }) => {
+      const coupon = row.original;
+
+      return (
+        <div className="flex items-center gap-2 space-x-2">
+          {/* Edit Button */}
+          <Link
+            href={`/discount/firstorder/edit/${coupon._id}`}
+            onClick={() => {
+              // Implement edit logic here
+              console.log("Editing coupon:", coupon._id);
+            }}
+          >
+            <Edit2 size={20} />
+          </Link>
+
+          {/* Delete Button */}
+          <button
+            onClick={() => {
+              // Implement delete logic here
+              console.log("Deleting coupon:", coupon._id);
+              handleToDeleteSelected(coupon._id);
+            }}
+          >
+            <Trash2 size={20} />
+          </button>
+        </div>
+      );
+    },
+  },
+];
 export const firstOrderDiscountColumns = Joi.object({
   discountPercentage: Joi.number().min(0).max(100).required().messages({
     "any.required": "Discount Percentage is required.",
@@ -355,6 +530,10 @@ export const firstOrderDiscountColumns = Joi.object({
     "any.required": "Active is required.",
     "boolean.base": "Active must be a boolean value.",
   }),
+  userIds: Joi.array().items(Joi.string()).required().messages({
+    "any.required": "User IDs are required.",
+    "array.base": "User IDs must be an array.",
+  }),
 });
 const handleToDeleteSelectedRow = async (id: string) => {
   // Use Promise.all to handle multiple deletions concurrently
@@ -362,7 +541,31 @@ const handleToDeleteSelectedRow = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `https://e-com-promo-api-57xi.vercel.app/api/v1/discounts/${id}`,
+    `https://e-com-promo-api.vercel.app/api/v1/discounts/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  // Check for errors
+  if (!response.ok) {
+    const error = await response.json();
+    toast.error(error.message);
+  }
+
+  const data = await response.json();
+
+  toast.success(data.message || "Successfully deleted");
+  window.location.reload();
+};
+
+const handleToDeleteSelected = async (id: string) => {
+  // Use Promise.all to handle multiple deletions concurrently
+
+  toast.info("Deleting selected Discount...");
+
+  const response = await fetch(
+    `https://e-com-promo-api.vercel.app/api/v1/discounts/firstorder/${id}`,
     {
       method: "DELETE",
     }

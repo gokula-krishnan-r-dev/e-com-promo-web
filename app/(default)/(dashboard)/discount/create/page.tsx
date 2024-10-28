@@ -7,7 +7,7 @@ const page = () => {
   return (
     <main className="px-6 py-3">
       <div className="">
-        <HeaderWrapper title="Discount" button={<AddCouponButton />}>
+        <HeaderWrapper title="Add Discount" button={<AddCouponButton />}>
           <div className="px-1 w-full py-3">
             <DiscountForm />
           </div>

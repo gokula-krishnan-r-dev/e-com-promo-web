@@ -1,13 +1,22 @@
 import React from "react";
 import DynamicTabs from "./tabs";
 import { useDiscountContext } from "@/components/hook/discountContext";
-import { DiscountColumnstable } from "@/content/discount/discount-centent";
+import {
+  DiscountColumnstable,
+  firstOrderDiscount,
+} from "@/content/discount/discount-centent";
 import { DiscountTable } from "./table/discount-table";
 import { toast } from "sonner";
+import { FirstOrderDiscount } from "./table/firstorder-discount";
 
 const DiscountTableList = ({ edit }: any) => {
-  const { discounts, selectedRow, refetch, setRowSelection } =
-    useDiscountContext();
+  const {
+    discounts,
+    selectedRow,
+    refetch,
+    setRowSelection,
+    firstOrderDiscounts,
+  } = useDiscountContext();
 
   const tabData = [
     {
@@ -22,7 +31,12 @@ const DiscountTableList = ({ edit }: any) => {
       label: "First Order Discount List",
       value: "first_order_discount",
       filter: "",
-      content: <div className="">First Order Discount List Page design </div>,
+      content: (
+        <FirstOrderDiscount
+          data={firstOrderDiscounts}
+          columns={firstOrderDiscount}
+        />
+      ),
     },
   ];
 
@@ -43,7 +57,7 @@ const DiscountTableList = ({ edit }: any) => {
       // Use Promise.all to handle multiple deletions concurrently
       const deletePromises = ListIds.map(async (id) => {
         const response = await fetch(
-          `https://e-com-promo-api-57xi.vercel.app/api/v1/discounts/${id}`,
+          `https://e-com-promo-api.vercel.app/api/v1/discounts/${id}`,
           {
             method: "DELETE",
           }
@@ -82,7 +96,7 @@ const DiscountTableList = ({ edit }: any) => {
   return (
     <div className="px-6 py-3">
       <div className="flex items-center justify-between w-full">
-        <h2 className="text-base font-semibold">Existing Coupons</h2>
+        <h2 className="text-base font-semibold">Existing Discount</h2>
         {selectedRow.size > 0 && (
           <div className="flex  items-center">
             <button className="border p-2 rounded-l-xl">

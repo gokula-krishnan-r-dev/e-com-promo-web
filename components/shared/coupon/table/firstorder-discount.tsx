@@ -22,13 +22,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CouponColumnstable } from "@/content/coupon/coupon-column";
-import { useCouponContext } from "@/components/hook/CouponContext";
 import { cn } from "@/lib/utils";
 import { isBefore, parseISO } from "date-fns";
 import { useDiscountContext } from "@/components/hook/discountContext";
 import { toast } from "sonner";
 
-export function DiscountTable({ data, columns }: any) {
+export function FirstOrderDiscount({ data, columns }: any) {
   const {
     setSelectedRow,
     setRowSelection,
@@ -45,6 +44,8 @@ export function DiscountTable({ data, columns }: any) {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  console.log(data, "data");
+
   const table = useReactTable({
     data,
     columns: columns || CouponColumnstable,
@@ -151,12 +152,6 @@ export function DiscountTable({ data, columns }: any) {
                         )}
                       </TableCell>
                     ))}
-                    {/* Conditionally render "Inactive" if the coupon has expired
-                    {isInactive && (
-                      <TableCell className="text-red-500 font-semibold">
-                        Inactive
-                      </TableCell>
-                    )} */}
                   </TableRow>
                 );
               })

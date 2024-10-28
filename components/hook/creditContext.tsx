@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Joi from "joi";
 import { toast } from "sonner";
@@ -27,6 +27,11 @@ interface CreditContextProps {
   rowSelection: Record<string, any>;
   setSelectedRow: (selectedRow: any) => void;
   selectedRow: any;
+  setLimit: (limit: number) => void;
+  setPage: (page: number) => void;
+  limit: number;
+  page: number;
+  totalPages: number;
 }
 
 // Create the Credit context
@@ -64,17 +69,27 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
   const [credits, setCredits] = useState<Credit[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [filtersC, setFilters] = useState<any>({
     sortBy: "startDate",
     sortOrder: "desc",
-    page: 1,
-    limit: 10,
+    page,
+    limit,
   });
-
+  const [totalPages, setTotalPages] = useState<number>(1);
+  useEffect(() => {
+    // Update filtersC whenever page or limit changes
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      page,
+      limit,
+    }));
+  }, [page, limit]);
   // Function to fetch credits from the API
   const fetchCredits = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api-57xi.vercel.app/api/v1/credits?${new URLSearchParams(
+      `https://e-com-promo-api.vercel.app/api/v1/credits?${new URLSearchParams(
         filters
       )}`
     );
@@ -82,7 +97,8 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error("Failed to fetch credits");
     }
     const data = await response.json();
-    setCredits(data.credits);
+    setCredits(data.data);
+    setTotalPages(data?.pagination?.totalPages);
     return data;
   };
 
@@ -121,6 +137,11 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
         rowSelection,
         setSelectedRow,
         selectedRow,
+        setLimit,
+        setPage,
+        limit,
+        page,
+        totalPages,
       }}
     >
       {children}

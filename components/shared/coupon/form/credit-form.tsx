@@ -58,7 +58,12 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
       method: method === "PUT" ? "PUT" : "POST",
     }
   );
+  const handletoClear = () => {
+    setFormData({});
+    window.location.reload();
 
+    toast.success("Form Cleared Successfully!");
+  };
   // Initialize form data with empty fields
   const [formData, setFormData] = useState<any>(defaultValue || {});
 
@@ -589,7 +594,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
       )}
       <div className="flex justify-center items-center px-4 pb-4 gap-4">
         <button
-          type="button"
+          onClick={handletoClear}
           className="px-4 py-2 rounded-lg border text-sm font-medium"
         >
           Clear

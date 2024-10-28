@@ -45,93 +45,6 @@ export const categories = {
     {
       id: "CAT_GEMSTONES_001",
       name: "Gemstones",
-      subcategories: [
-        {
-          id: "SUB_DIAMOND_001_001",
-          name: "Diamond",
-          isChecked: false,
-        },
-        {
-          id: "SUB_SAPPHIRE_001_002",
-          name: "Sapphire",
-          isChecked: false,
-        },
-        {
-          id: "SUB_EMERALD_001_003",
-          name: "Emerald",
-          isChecked: false,
-        },
-        {
-          id: "SUB_RUBY_001_004",
-          name: "Ruby",
-          isChecked: false,
-        },
-        {
-          id: "SUB_AMETHYST_001_005",
-          name: "Amethyst",
-          isChecked: false,
-        },
-        {
-          id: "SUB_TANZANITE_001_006",
-          name: "Tanzanite",
-          isChecked: false,
-        },
-        {
-          id: "SUB_AQUAMARINE_001_007",
-          name: "Aquamarine",
-          isChecked: false,
-        },
-        {
-          id: "SUB_CITRINE_001_008",
-          name: "Citrine",
-          isChecked: false,
-        },
-        {
-          id: "SUB_OPAL_001_009",
-          name: "Opal",
-          isChecked: false,
-        },
-        {
-          id: "SUB_TOPAZ_001_010",
-          name: "Topaz",
-          isChecked: false,
-        },
-        {
-          id: "SUB_PERIDOT_001_011",
-          name: "Peridot",
-          isChecked: false,
-        },
-        {
-          id: "SUB_GARNET_001_012",
-          name: "Garnet",
-          isChecked: false,
-        },
-        {
-          id: "SUB_MOONSTONE_001_013",
-          name: "Moonstone",
-          isChecked: false,
-        },
-        {
-          id: "SUB_TURQUOISE_001_014",
-          name: "Turquoise",
-          isChecked: false,
-        },
-        {
-          id: "SUB_LAPIS_LAZULI_001_015",
-          name: "Lapis Lazuli",
-          isChecked: false,
-        },
-        {
-          id: "SUB_AMBER_001_016",
-          name: "Amber",
-          isChecked: false,
-        },
-        {
-          id: "SUB_JADE_001_017",
-          name: "Jade",
-          isChecked: false,
-        },
-      ],
       isChecked: false,
     },
     {
@@ -206,7 +119,32 @@ export const categories = {
     {
       id: "CAT_DROPS_BEADS_004",
       name: "Drops & Beads",
-      subcategories: [],
+      subcategories: [
+        //Pairs
+        {
+          id: "SUB_PAIRS_004_001",
+          name: "Pairs",
+          isChecked: false,
+        },
+        // Single
+        {
+          id: "SUB_SINGLE_004_002",
+          name: "Single",
+          isChecked: false,
+        },
+        // lines
+        {
+          id: "SUB_LINES_004_003",
+          name: "Lines",
+          isChecked: false,
+        },
+        // Beads
+        {
+          id: "SUB_BEADS_004_004",
+          name: "Beads",
+          isChecked: false,
+        },
+      ],
       isChecked: false,
     },
     {
@@ -408,10 +346,10 @@ export function ProductDialog({
             </div>
           </div>
         </ScrollArea>
-        <DialogFooter className="flex justify-end space-x-2">
+        <div className="flex items-center justify-center gap-3">
           <Button
             onClick={() => setIsOpen(false)}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-700"
+            className=" bg-white border shadow-none rounded-xl text-gray-700"
           >
             Cancel
           </Button>
@@ -420,11 +358,35 @@ export function ProductDialog({
               // Save logic here
               setIsOpen(false);
             }}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-[#316BEB] flex items-center gap-3 px-4 hover:bg-blue-700 shadow-none rounded-xl text-white"
           >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2.88702 17.1132C4.1074 18.3337 6.07158 18.3337 9.99996 18.3337C13.9283 18.3337 15.8925 18.3337 17.1129 17.1132C18.3333 15.8929 18.3333 13.9287 18.3333 10.0003C18.3333 9.71574 18.3333 9.57349 18.3206 9.42883C18.2618 8.75441 17.9883 8.09413 17.553 7.57561C17.4596 7.46438 17.3566 7.3613 17.1505 7.15514L12.8451 2.84986C12.639 2.64371 12.5359 2.54062 12.4247 2.44725C11.9061 2.01199 11.2459 1.7385 10.5715 1.67962C10.4268 1.66699 10.2845 1.66699 9.99996 1.66699C6.07158 1.66699 4.1074 1.66699 2.88702 2.88738C1.66663 4.10777 1.66663 6.07195 1.66663 10.0003C1.66663 13.9287 1.66663 15.8929 2.88702 17.1132Z"
+                stroke="white"
+                stroke-width="1.5"
+              />
+              <path
+                d="M14.1667 18.3337V17.5003C14.1667 15.929 14.1667 15.1433 13.6785 14.6552C13.1904 14.167 12.4047 14.167 10.8334 14.167H9.16671C7.59536 14.167 6.80968 14.167 6.32153 14.6552C5.83337 15.1433 5.83337 15.929 5.83337 17.5003V18.3337"
+                stroke="white"
+                stroke-width="1.5"
+              />
+              <path
+                d="M5.83337 6.66699H10.8334"
+                stroke="white"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
             Save
-          </Button>
-        </DialogFooter>
+          </Button>{" "}
+        </div>
       </DialogContent>
     </Dialog>
   );

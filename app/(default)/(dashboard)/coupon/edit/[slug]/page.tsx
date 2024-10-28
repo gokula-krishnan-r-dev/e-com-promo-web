@@ -13,9 +13,9 @@ function Page({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
-  const { data, error } = useQuery("discount", async () => {
+  const { data, error } = useQuery("coupon", async () => {
     const response = await fetch(
-      `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${params.slug}`
+      `https://e-com-promo-api.vercel.app/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
     return data;
@@ -32,12 +32,12 @@ function Page({ params }: { params: { slug: string } }) {
     {
       label: "Birthday Coupons",
       value: "birthday",
-      content: <BirthdayCouponForm />,
+      content: <BirthdayCouponForm method={"PUT"} defaultValue={data} />,
     },
     {
       label: "Anniversary Coupons",
       value: "anniversary",
-      content: <AnniversayCouponForm />,
+      content: <AnniversayCouponForm method={"PUT"} defaultValue={data} />,
     },
   ];
 
@@ -46,7 +46,11 @@ function Page({ params }: { params: { slug: string } }) {
       <div className="">
         <HeaderWrapper title="Coupon" button={<AddCouponButton />}>
           <div className="px-1 w-full py-3">
-            <DynamicTabs defaultValue={id || "general"} tabs={tabData} />
+            <DynamicTabs
+              method={"PUT"}
+              defaultValue={id || "general"}
+              tabs={tabData}
+            />
           </div>
         </HeaderWrapper>
         {/* <div className="px-1 w-full py-3">

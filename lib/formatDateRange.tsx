@@ -17,3 +17,13 @@ export const formatDateRange = (startDate: string, endDate: string): string => {
 
   return `${formattedStartDate} - ${formattedEndDate}`;
 };
+
+export const formatDate = (date: string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  };
+
+  return new Date(date).toLocaleDateString("en-US", options);
+};

@@ -109,16 +109,16 @@ const SearchDiscount: React.FC<SearchCouponProps> = ({ filters, onSearch }) => {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[280px] justify-start text-left font-normal",
+                        "w-full justify-between flex items-center text-left font-normal",
                         !formValues[filter.name] && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
                       {formValues[filter.name] ? (
                         format(new Date(formValues[filter.name]), "PPP")
                       ) : (
                         <span>{filter.placeholder || "Pick a date"}</span>
                       )}
+                      <CalendarIcon className="mr-2 h-4 w-4" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">

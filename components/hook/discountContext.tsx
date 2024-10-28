@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Joi from "joi";
 import { toast } from "sonner";
@@ -24,6 +24,12 @@ interface DiscountContextProps {
   selectedRow: any;
   setRowSelection: (rowSelection: Record<string, any>) => void;
   rowSelection: Record<string, any>;
+  setLimit: (limit: number) => void;
+  setPage: (page: number) => void;
+  limit: number;
+  page: number;
+  totalPages: number;
+  firstOrderDiscounts: any;
 }
 
 const DiscountContext = createContext<DiscountContextProps | undefined>(
@@ -61,16 +67,28 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [filtersD, setFilters] = useState<any>({
     sortBy: "startDate",
     sortOrder: "desc",
-    page: 1,
-    limit: 10,
+    page,
+    limit,
   });
+
+  useEffect(() => {
+    // Update filtersC whenever page or limit changes
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      page,
+      limit,
+    }));
+  }, [page, limit]);
 
   const fetchDiscounts = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api-57xi.vercel.app/api/v1/discounts?${new URLSearchParams(
+      `https://e-com-promo-api.vercel.app/api/v1/discounts?${new URLSearchParams(
         filters
       )}`
     );
@@ -79,12 +97,33 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     const data = await response.json();
     setDiscounts(data.discounts);
+    setTotalPages(data?.pagination?.totalPages);
     return data;
   };
 
   const { refetch } = useQuery(
     ["discount", { page: filtersD.page, limit: filtersD.limit }],
     () => fetchDiscounts(filtersD),
+    { keepPreviousData: true }
+  );
+
+  const fetchFirstOrderDiscounts = async (filters: Record<string, any>) => {
+    const response = await fetch(
+      `https://e-com-promo-api.vercel.app/api/v1/discounts/first-order-discounts?${new URLSearchParams(
+        filters
+      )}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch first order discounts");
+    }
+    const data = await response.json();
+
+    return data.discount;
+  };
+
+  const { data: firstOrderDiscounts } = useQuery(
+    ["firstOrderDiscounts", { page: filtersD.page, limit: filtersD.limit }],
+    () => fetchFirstOrderDiscounts(filtersD),
     { keepPreviousData: true }
   );
 
@@ -114,6 +153,12 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
         selectedRow,
         rowSelection,
         setRowSelection,
+        setLimit,
+        setPage,
+        limit,
+        page,
+        totalPages,
+        firstOrderDiscounts,
       }}
     >
       {children}

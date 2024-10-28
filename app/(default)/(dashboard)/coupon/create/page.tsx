@@ -28,7 +28,7 @@ const page = () => {
   return (
     <main className="px-6 py-3">
       <div className="">
-        <HeaderWrapper title="Coupon" button={<AddCouponButton />}>
+        <HeaderWrapper title="Add Coupon" button={<AddCouponButton />}>
           <div className="px-1 w-full py-3">
             <DynamicTabs defaultValue="general" tabs={tabData} />
           </div>
@@ -41,7 +41,7 @@ const page = () => {
 // Refactored button into its own reusable component
 const AddCouponButton: React.FC = () => (
   <Link
-    href="/coupon/create"
+    href="/coupon"
     className="bg-gradient-to-r from-[#316BEB] to-[#2964ED] text-white px-4 py-2 flex items-center text-sm gap-2 rounded-lg font-semibold"
   >
     View Coupon List

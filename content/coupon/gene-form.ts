@@ -27,7 +27,7 @@ export const formFields: FormField[] = [
     type: "select",
     label: "Coupon Type",
     id: "couponTypeDiscount",
-    placeholder: "Enter coupon code",
+    placeholder: "Select Coupon Type",
     required: true,
     options: [
       { value: "FLAT_DISCOUNT", label: "Flat Discount" },
@@ -40,7 +40,7 @@ export const formFields: FormField[] = [
   {
     name: "couponMethod",
     type: "radio",
-    label: "Coupon Method",
+    label: "Generate By",
     id: "couponMethod",
     options: [
       { value: "self", label: "Self" },
@@ -84,13 +84,13 @@ export const formFields: FormField[] = [
   {
     name: "minimumPurchase",
     type: "number",
-    label: "Minimum Purchase Value",
+    label: "Minimum Purchase",
     id: "minimumPurchase",
-    placeholder: "Enter minimum purchase value",
+    placeholder: "Enter minimum purchase ",
     required: false,
     validation: {
       pattern: /^[0-9]*\.?[0-9]+$/,
-      errorMessage: "Minimum purchase value must be a number.",
+      errorMessage: "Minimum purchase  must be a number.",
     },
   },
   {
@@ -121,15 +121,15 @@ export const formFields: FormField[] = [
   {
     name: "validForCountry",
     type: "select",
-    label: "Valid For Country",
+    label: "Valid For Countries",
     id: "validForCountry",
     placeholder: "Select country",
     options: [
-      { value: "ALL", label: "All Countries" },
-      { value: "IN", label: "India" },
-      { value: "US", label: "United States" },
-      { value: "CA", label: "Canada" },
-      { value: "MX", label: "Mexico" },
+      { label: "All Countries", value: "ALL" },
+      { label: "United States", value: "US" },
+      { label: "Canada", value: "CA" },
+      { label: "United States/Canada", value: "US/UK" },
+      { label: "Rest of the World", value: "ROW" },
     ],
     required: true,
     validation: {
@@ -157,8 +157,8 @@ export const formFields: FormField[] = [
     label: "Display On Site",
     id: "displayOnSite",
     options: [
-      { value: "yes", label: "Yes" },
-      { value: "no", label: "No" },
+      { value: true, label: "Yes" },
+      { value: false, label: "No" },
     ],
     required: true,
     validation: {
@@ -171,7 +171,7 @@ export const formFields: FormField[] = [
     label: "Description",
     id: "description",
     placeholder: "Enter description",
-    required: true,
+    required: false,
     validation: {
       errorMessage: "Description is required.",
     },
@@ -214,27 +214,27 @@ export const formFieldsBirthday: FormField[] = [
   {
     name: "minimumPurchase",
     type: "number",
-    label: "Minimum Purchase Value",
+    label: "Minimum Purchase ",
     id: "minimumPurchase",
-    placeholder: "Enter minimum purchase value",
+    placeholder: "Enter minimum purchase ",
     required: false,
     validation: {
       pattern: /^[0-9]*\.?[0-9]+$/,
-      errorMessage: "Minimum purchase value must be a number.",
+      errorMessage: "Minimum purchase  must be a number.",
     },
   },
   {
     name: "validForCountry",
     type: "select",
-    label: "Valid For Country",
+    label: "Valid For Countries",
     id: "validForCountry",
     placeholder: "Select country",
     options: [
-      { value: "ALL", label: "All Countries" },
-      { value: "IN", label: "India" },
-      { value: "US", label: "United States" },
-      { value: "CA", label: "Canada" },
-      { value: "MX", label: "Mexico" },
+      { label: "All Countries", value: "ALL" },
+      { label: "United States", value: "US" },
+      { label: "Canada", value: "CA" },
+      { label: "United States/Canada", value: "US/UK" },
+      { label: "Rest of the World", value: "ROW" },
     ],
     required: true,
     validation: {
@@ -283,7 +283,7 @@ export const formFieldsBirthday: FormField[] = [
     label: "Description",
     id: "description",
     placeholder: "Enter description",
-    required: true,
+    required: false,
     validation: {
       errorMessage: "Description is required.",
     },
@@ -326,27 +326,27 @@ export const formFieldsAnniversary: FormField[] = [
   {
     name: "minimumPurchase",
     type: "number",
-    label: "Minimum Purchase Value",
+    label: "Minimum Purchase ",
     id: "minimumPurchase",
-    placeholder: "Enter minimum purchase value",
+    placeholder: "Enter minimum purchase ",
     required: false,
     validation: {
       pattern: /^[0-9]*\.?[0-9]+$/,
-      errorMessage: "Minimum purchase value must be a number.",
+      errorMessage: "Minimum purchase  must be a number.",
     },
   },
   {
     name: "validForCountry",
     type: "select",
-    label: "Valid For Country",
+    label: "Valid For Countries",
     id: "validForCountry",
     placeholder: "Select country",
     options: [
-      { value: "ALL", label: "All Countries" },
-      { value: "IN", label: "India" },
-      { value: "US", label: "United States" },
-      { value: "CA", label: "Canada" },
-      { value: "MX", label: "Mexico" },
+      { label: "All Countries", value: "ALL" },
+      { label: "United States", value: "US" },
+      { label: "Canada", value: "CA" },
+      { label: "United States/Canada", value: "US/UK" },
+      { label: "Rest of the World", value: "ROW" },
     ],
     required: true,
     validation: {
@@ -395,7 +395,7 @@ export const formFieldsAnniversary: FormField[] = [
     label: "Description",
     id: "description",
     placeholder: "Enter description",
-    required: true,
+    required: false,
     validation: {
       errorMessage: "Description is required.",
     },

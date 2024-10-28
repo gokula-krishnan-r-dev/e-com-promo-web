@@ -43,12 +43,21 @@ const SearchUser: React.FC<SearchCouponProps> = ({ filters, onSearch }) => {
     e.preventDefault();
     onSearch(formValues);
     searchDiscounts(filtersD);
+    return {
+      formValues,
+      filtersD,
+    };
   };
 
   const handleReset = () => {
     setFormValues({});
     setFilters({});
-    refetch();
+    onSearch(formValues);
+    searchDiscounts(filtersD);
+    return {
+      formValues,
+      filtersD,
+    };
   };
 
   return (
@@ -104,19 +113,18 @@ const SearchUser: React.FC<SearchCouponProps> = ({ filters, onSearch }) => {
         ))}
       </div>
       <div className="flex justify-end px-4 pb-4 gap-4">
-        <button
-          type="button"
+        <div
           onClick={handleReset}
-          className="px-4 py-2 rounded-lg border text-sm font-medium"
+          className="px-4 py-2 rounded-lg cursor-pointer border text-sm font-medium"
         >
           Clear
-        </button>
-        <button
-          type="submit"
-          className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
+        </div>
+        <div
+          onClick={handleSubmit}
+          className="bg-[#316BEB] cursor-pointer  text-white text-sm px-4 py-2 rounded-lg font-medium"
         >
           Search
-        </button>
+        </div>
       </div>
     </form>
   );

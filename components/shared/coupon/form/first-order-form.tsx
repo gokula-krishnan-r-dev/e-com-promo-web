@@ -31,20 +31,70 @@ import discountFormSchema, {
   firstorderDisocuntFormFields,
 } from "@/content/discount/discount-centent";
 import { Switch } from "@/components/ui/switch";
-import { useFetch } from "@/components/hook/useFetch";
 import { useQuery } from "react-query";
-
+import SearchUser from "../search-user-list";
+import { UserListWithSelect } from "../user-list";
+import { userFilters } from "@/content/coupon/search-filter";
+export const excludeFields = [
+  "_id",
+  "__v",
+  "updatedAt",
+  "createdAt",
+  "userId",
+  "firstName",
+  "lastName",
+  "email",
+  "isApplied",
+  "mailDate",
+  "isUsered",
+]; //
 interface ValidationErrors {
   [key: string]: string;
 }
 
-const FirstOrderDiscountForm: React.FC = () => {
+const FirstOrderDiscountForm: React.FC<any> = ({
+  defaultValue,
+  method,
+}: any) => {
   const router = useRouter();
+  console.log(defaultValue, "defaultValue");
+
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+
+  const { data: user, refetch } = useQuery(
+    ["users", firstName, lastName],
+    async () => {
+      const params = new URLSearchParams();
+
+      // Add dynamic filters based on state
+      if (firstName) params.append("filter[firstName]", firstName);
+      if (lastName) params.append("filter[lastName]", lastName);
+
+      const response = await fetch(
+        `https://big-backend.vercel.app/v1/users/?userType=registered_user&${params.toString()}&filter[status]=active`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const data = await response.json();
+      return data.results;
+    }
+  );
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const handleSearch = (values: Record<string, string>) => {
+    console.log("Search Values:", values);
+    setFirstName(values.firstName);
+    setLastName(values.lastName);
+  };
   const { data: FirstOrderDiscount, isLoading } = useQuery(
     "discount",
     async () => {
       const response = await fetch(
-        `https://e-com-promo-api-57xi.vercel.app/api/v1/discounts/first-order-discounts`
+        `https://e-com-promo-api.vercel.app/api/v1/discounts/first-order-discounts`
       );
       const data = await response.json();
       return data.discount;
@@ -52,29 +102,26 @@ const FirstOrderDiscountForm: React.FC = () => {
   );
 
   const { data, mutate, error } = useMutation(
-    "/discounts/first-order-discounts",
+    `/discounts/first-order-discounts/${
+      method === "PUT" ? defaultValue?._id : ""
+    }`,
     {
-      method: "POST",
+      method: method === "PUT" ? "PUT" : "POST",
     }
   );
   const [isActive, setIsActive] = useState<boolean>(false);
-  const [formData, setFormData] = useState<any>({
-    discountPercentage: 0,
-    isActive: false,
-  });
-
-  // Dynamically update form data based on FirstOrderDiscount
-  useEffect(() => {
-    if (FirstOrderDiscount && FirstOrderDiscount.length > 0) {
-      const discountData = FirstOrderDiscount[0];
-
-      setIsActive(discountData.isActive || false); // Update isActive based on FirstOrderDiscount
-      setFormData({
-        discountPercentage: discountData.discountPercentage || 0, // Set discountPercentage from data or fallback to 0
-        isActive: discountData.isActive || false,
-      });
+  const [formData, setFormData] = useState<any>(
+    defaultValue || {
+      discountPercentage: "",
+      isActive: false,
     }
-  }, [FirstOrderDiscount]);
+  );
+
+  useEffect(() => {
+    if (defaultValue) {
+      setFormData(defaultValue);
+    }
+  }, [defaultValue]);
 
   console.log(formData, "formData");
 
@@ -101,9 +148,21 @@ const FirstOrderDiscountForm: React.FC = () => {
 
   // Static validate function using the predefined Joi schema
   const validate = (): boolean => {
-    const { error } = firstOrderDiscountColumns.validate(formData, {
-      abortEarly: false,
-    });
+    const final = Object.keys(formData).reduce(
+      (acc: { [key: string]: any }, key) => {
+        if (!excludeFields.includes(key)) {
+          acc[key] = formData[key];
+        }
+        return acc;
+      },
+      {}
+    );
+    const { error } = firstOrderDiscountColumns.validate(
+      method === "POST" ? formData : final,
+      {
+        abortEarly: false,
+      }
+    );
     console.log(error, "error");
 
     if (error) {
@@ -119,7 +178,12 @@ const FirstOrderDiscountForm: React.FC = () => {
     setErrors({});
     return true;
   };
+  const handletoClear = () => {
+    setFormData({});
+    window.location.reload();
 
+    toast.success("Form Cleared Successfully!");
+  };
   // Generate a random coupon code
   const generateCouponCode = () => {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -147,7 +211,7 @@ const FirstOrderDiscountForm: React.FC = () => {
         ...formData,
       };
 
-      mutate(final, "POST", {
+      mutate(final, method === "PUT" ? "PUT" : "POST", {
         onSuccess: (response) => {
           if (response.status === 201) {
             // Show a success toast message
@@ -539,13 +603,14 @@ const FirstOrderDiscountForm: React.FC = () => {
           </div>
         );
       })}
+
       <div className="flex justify-center items-center px-4 pb-4 gap-4">
-        <button
-          type="button"
-          className="px-4 py-2 rounded-lg border text-sm font-medium"
+        <div
+          onClick={handletoClear}
+          className="px-4 py-2 rounded-lg cursor-pointer border text-sm font-medium"
         >
           Clear
-        </button>
+        </div>
         <Button
           variant={"default"}
           isLoading={isLoading}
@@ -556,7 +621,32 @@ const FirstOrderDiscountForm: React.FC = () => {
           Add
         </Button>
       </div>
+
       {error && <p className="text-red-500 text-sm">{error.message}</p>}
+      <div className="">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">
+            Users who have recently Signed Up
+          </h1>
+
+          <div className="flex items-center gap-6">
+            <h1>Mail to Customer</h1>
+            <Switch
+              checked={formData?.userIds?.length > 0}
+              color="blue"
+              id="airplane-mode"
+            />
+          </div>
+        </div>
+        <div className="grid gap-4 py-4">
+          <SearchUser filters={userFilters} onSearch={handleSearch} />
+          <UserListWithSelect
+            data={user}
+            setFormData={setFormData}
+            formData={formData}
+          />
+        </div>
+      </div>
     </form>
   );
 };

@@ -9,7 +9,7 @@ export function TabsCom({ children, defaultValue }: any) {
     </Tabs>
   );
 }
-import React from "react";
+import React, { useEffect } from "react";
 
 interface Tab {
   label: string;
@@ -20,15 +20,24 @@ interface Tab {
 interface DynamicTabsProps {
   defaultValue: string;
   tabs: Tab[];
+  method?: string;
 }
 
-const DynamicTabs: React.FC<DynamicTabsProps> = ({ defaultValue, tabs }) => {
+const DynamicTabs: React.FC<DynamicTabsProps> = ({
+  defaultValue,
+  tabs,
+  method,
+}) => {
   return (
     <div className="w-full">
       <TabsCom defaultValue={defaultValue}>
         <TabsList className="w-max">
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value}>
+            <TabsTrigger
+              disabled={method && defaultValue !== tab.value ? true : false}
+              key={tab.value}
+              value={tab.value}
+            >
               {tab.label}
             </TabsTrigger>
           ))}

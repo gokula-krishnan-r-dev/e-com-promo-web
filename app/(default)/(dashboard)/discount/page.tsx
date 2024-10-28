@@ -22,7 +22,7 @@ const Coupon: React.FC = () => {
 
   return (
     <main className="px-2 py-2">
-      <HeaderWrapper title="Discount" button={<AddCouponButton />}>
+      <HeaderWrapper title="Discount List" button={<AddCouponButton />}>
         <SearchDiscount filters={discountFilters} onSearch={handleSearch} />
         <DiscountTableList edit={"/discount/edit"} />
       </HeaderWrapper>

@@ -1,8 +1,9 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import Joi from "joi";
 import { toast } from "sonner";
+import { set } from "date-fns";
 
 interface Coupon {
   id: string;
@@ -28,6 +29,11 @@ interface CouponContextProps {
   rowSelection: Record<string, any>;
   setSelectedRow: (selectedRow: any) => void;
   selectedRow: any;
+  setLimit: (limit: number) => void;
+  setPage: (page: number) => void;
+  limit: number;
+  page: number;
+  totalPages: number;
 }
 
 const CouponContext = createContext<CouponContextProps | undefined>(undefined);
@@ -42,9 +48,6 @@ export const useCouponContext = (): CouponContextProps => {
 
 const validateCouponSearch = Joi.object({
   couponCode: Joi.string().optional(),
-  // couponType: Joi.string()
-  //   .valid("GENERAL", "BIRTHDAY", "ANNIVERSARY")
-  //   .optional(),
   validForCountry: Joi.string().optional(),
   status: Joi.string().valid("ACTIVE", "INACTIVE").optional(),
   useType: Joi.string().valid("ONE_TIME", "MULTIPLE").optional(),
@@ -70,18 +73,31 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
+  const [rowSelection, setRowSelection] = useState<Record<string, any>>({});
+  const [selectedRow, setSelectedRow] = useState<any>(new Set());
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [filtersC, setFilters] = useState<any>({
     filter: "FLAT_DISCOUNT_WITH_MIN",
     sortBy: "createdAt",
     sortOrder: "desc",
-    page: 1,
-    limit: 10,
+    page,
+    limit,
   });
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  useEffect(() => {
+    // Update filtersC whenever page or limit changes
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      page,
+      limit,
+    }));
+  }, [page, limit]);
+
   const fetchCoupons = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons?${new URLSearchParams(
+      `https://e-com-promo-api.vercel.app/api/v1/coupons?${new URLSearchParams(
         filters
       )}`
     );
@@ -89,23 +105,22 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error("Failed to fetch coupons");
     }
     const data = await response.json();
+
     setCoupons(data.data);
+    setTotalPages(data?.pagination?.totalPages);
     return data;
   };
 
   const { refetch } = useQuery(
-    ["coupon", { page: 1, limit: 10, filter: filtersC.filter }],
-    () =>
-      fetchCoupons({
-        ...filtersC,
-      }),
+    ["coupon", filtersC],
+    () => fetchCoupons(filtersC),
     { keepPreviousData: true }
   );
 
   const searchCoupons = (filters: Record<string, any>) => {
     const { error, value } = validateCouponSearch.validate(filters);
     // if (error) {
-    //   error.details.map((err) => toast.error(err.message));
+    //   error.details.forEach((err) => toast.error(err.message));
     //   console.error(
     //     "Invalid search query:",
     //     error.details.map((err) => err.message)
@@ -115,6 +130,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
     setFilters(value);
     refetch();
   };
+
   return (
     <CouponContext.Provider
       value={{
@@ -127,6 +143,11 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
         rowSelection,
         setSelectedRow,
         selectedRow,
+        setLimit,
+        setPage,
+        limit,
+        page,
+        totalPages,
       }}
     >
       {children}
