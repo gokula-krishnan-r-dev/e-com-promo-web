@@ -17,6 +17,7 @@ import UserList from "../user-list";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@/components/hook/useMutation";
 import { toast } from "sonner";
+import { excludeFields } from "./anniversary-coupon-form";
 
 // Define types for form data and validation errors
 interface FormData {
@@ -106,7 +107,16 @@ const BirthdayCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
   console.log(formData, "formData");
 
   const validate = (): boolean => {
-    const { error } = formSchema.validate(formData, { abortEarly: false });
+    const final = Object.keys(formData).reduce(
+      (acc: { [key: string]: any }, key) => {
+        if (!excludeFields.includes(key)) {
+          acc[key] = formData[key];
+        }
+        return acc;
+      },
+      {}
+    );
+    const { error } = formSchema.validate(final, { abortEarly: false });
     console.log(error, "error");
 
     if (error) {
@@ -216,7 +226,7 @@ const BirthdayCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
 
       mutate(final, method === "PUT" ? "PUT" : "POST", {
         onSuccess: (response) => {
-          if (response.status === 201) {
+          if (response.status === 201 || response.status === 200) {
             // Show a success toast message
             toast.success("Coupon created successfully!");
             router.back();
@@ -224,7 +234,7 @@ const BirthdayCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
         },
         onError: (error) => {
           // Handle the error if the request fails
-          toast.error("Failed to create coupon!");
+          toast.error(`Failed to create coupon! - ${data.error}`);
           console.error("Error:", error);
         },
       });

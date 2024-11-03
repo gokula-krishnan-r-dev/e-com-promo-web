@@ -18,7 +18,7 @@ function Page({ params }: { params: { slug: string } }) {
       `https://e-com-promo-api.vercel.app/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
-    return data;
+    return data?.coupon;
   });
 
   if (error) return <div>Something went wrong...</div>;

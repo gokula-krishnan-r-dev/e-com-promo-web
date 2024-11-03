@@ -29,6 +29,7 @@ export const excludeFields = [
   "couponType",
   "couponCode",
   "startDate",
+  "diffrance",
   "endDate",
 ]; // Add more fields to exclude as needed
 
@@ -245,7 +246,7 @@ const AnniversayCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
 
       mutate(final, method === "PUT" ? "PUT" : "POST", {
         onSuccess: (response) => {
-          if (response.status === 200) {
+          if (response.status === 201 || response.status === 200) {
             // Show a success toast message
             toast.success("Coupon created successfully!");
             router.back();

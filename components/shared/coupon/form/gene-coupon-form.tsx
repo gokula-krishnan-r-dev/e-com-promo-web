@@ -183,6 +183,7 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
     "updatedAt",
     "createdAt",
     "couponType",
+    "diffrance",
   ]; // A
 
   // Static validate function using the predefined Joi schema

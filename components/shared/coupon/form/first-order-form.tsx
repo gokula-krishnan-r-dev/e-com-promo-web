@@ -213,7 +213,7 @@ const FirstOrderDiscountForm: React.FC<any> = ({
 
       mutate(final, method === "PUT" ? "PUT" : "POST", {
         onSuccess: (response) => {
-          if (response.status === 201) {
+          if (response.status === 201 || response.status === 200) {
             // Show a success toast message
             toast.success("Coupon created successfully!");
             router.back();
