@@ -20,8 +20,9 @@ export function transformText(
     replaceUnderscores?: boolean; // Replace underscores with spaces
   }
 ): string {
-  const { capitalizeEachWord = false, replaceUnderscores = true } = options || {};
-if (!text) {
+  const { capitalizeEachWord = false, replaceUnderscores = true } =
+    options || {};
+  if (!text) {
     return "";
   }
   // Step 1: Replace underscores with spaces if enabled
@@ -34,7 +35,9 @@ if (!text) {
       .replace(/\b\w/g, (char) => char.toUpperCase());
   } else {
     // Capitalize only the first letter of the string
-    transformedText = transformedText.charAt(0).toUpperCase() + transformedText.slice(1).toLowerCase();
+    transformedText =
+      transformedText.charAt(0).toUpperCase() +
+      transformedText.slice(1).toLowerCase();
   }
 
   return transformedText;
@@ -136,9 +139,11 @@ const ViewCoupon = ({ params }: any) => {
                       scope="row"
                       className="px-6 py-4 text-center dark:text-white"
                     >
-                      {index +1}
+                      {index + 1}
                     </th>
-                    <td className="px-6 text-center  py-4">{coupon.couponCode}</td>
+                    <td className="px-6 text-center  py-4">
+                      {coupon.couponCode}
+                    </td>
                     <td className="px-6 text-center py-4">
                       {coupon.useCount >= 0 ? "unused" : "used"}
                     </td>

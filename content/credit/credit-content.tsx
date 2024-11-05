@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { formatDateRange } from "@/lib/formatDateRange";
 import Link from "next/link";
 import { toast } from "sonner";
+import { isBefore, parseISO } from "date-fns";
 
 // Define types for the data
 type CouponData = {
@@ -37,10 +38,13 @@ export const creditFormFields: FormField[] = [
   },
   {
     name: "startDate",
-    type: "date",
-    label: "Start Date",
+    type: "radio",
+    label: "Valid Upto",
     id: "startDate",
-    placeholder: "Select start date",
+    options: [
+      { value: "1", label: "One Month" },
+      { value: "2", label: "Valid Upto" },
+    ],
     required: true,
     validation: {
       errorMessage: "Start date is required.",
@@ -52,8 +56,8 @@ export const creditFormFields: FormField[] = [
     label: "User",
     id: "user",
     options: [
-      { value: "ALL", label: "All" },
-      { value: "SELECTED", label: "Selected" },
+      { value: "ALL", label: "All Users" },
+      { value: "SELECTED", label: "Individual Users" },
     ],
     required: true,
     validation: {
@@ -104,41 +108,49 @@ export const CreditColumnstable: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        />
+      </div>
     ),
-    cell: ({ row }: { row: Row<any> }) => (
+    cell: ({ row }: { row: Row<CouponData> }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    id: "creditAmount",
     accessorKey: "creditAmount",
-    header: () => <div className="text-center ">Credit Amount</div>,
+    header: () => <div className="text-start pl-4">Credit Amount</div>,
     cell: ({ row }) => {
       const creditAmount = row.getValue<number>("creditAmount");
-      return <div className="text-center font-medium">${creditAmount}</div>;
+      return <div className="text-start pl-4 font-medium">${creditAmount}</div>;
+    },
+  },
+  {
+    accessorKey: "usedAmount",
+    header: () => <div className="text-center pl-4">Used Amount</div>,
+    cell: ({ row }) => {
+      const creditAmount = row.getValue<number>("usedAmount") || 0;
+      return (
+        <div className="text-center pl-4 font-medium">${creditAmount}</div>
+      );
     },
   },
   {
     accessorKey: "startDate",
-    header: () => <div className="text-center ">Validity Range</div>,
+    header: () => <div className="text-center ">Credit Validity</div>,
     cell: ({ row }) => {
       const startDate = row.getValue<string>("startDate");
-      const endDate = row.original.endDate;
-
+      const endDate = row.getValue<string>("endDate");
       return <div>{formatDateRange(startDate, endDate)}</div>;
     },
   },
@@ -146,34 +158,34 @@ export const CreditColumnstable: ColumnDef<any>[] = [
     accessorKey: "status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
-      const status = row.getValue<string>("status").toLocaleLowerCase();
+      const endDate = row.original?.endDate
+        ? parseISO(row.original.endDate)
+        : null;
+      const currentDate = new Date();
 
-      // Define dynamic color mapping based on status
-      const statusColors: any = {
-        active: "bg-green-500 text-block",
-        inactive: "bg-gray-500 text-block",
-        pending: "bg-yellow-500 text-white",
-        expired: "bg-red-500 text-white",
-      };
+      // Determine if the row is inactive based on date comparison
+      const isInactive = endDate && isBefore(endDate, currentDate);
+      const status = isInactive ? "Inactive" : row.getValue<string>("status");
 
       // Determine the color to apply based on status
-      const statusColor = statusColors[status] || "bg-blue-500 text-white"; // Fallback for unknown status
+      const statusColor = status === "ACTIVE" ? "green" : "red";
 
       return (
-        <div
-          className={`capitalize flex items-center border ${statusColor} px-2 py-1 gap-2 rounded-full`}
-        >
-          <svg
-            width="6"
-            height="6"
-            viewBox="0 0 6 6"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="3" cy="3" r="3" fill="white" />
-          </svg>
-          {/* Capitalize first letter of the status */}
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+        <div className={`flex items-center justify-center`}>
+          <div className="capitalize  justify-center text-center bg-white flex w-max items-center border px-4 py-0 gap-2 rounded-full">
+            <svg
+              width="6"
+              height="6"
+              viewBox="0 0 6 6"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="3" cy="3" r="3" fill={statusColor} />
+            </svg>
+            {/* Capitalize first letter of the status */}
+            {status.charAt(0).toUpperCase() +
+              status.slice(1).toLocaleLowerCase()}
+          </div>
         </div>
       );
     },
@@ -183,30 +195,16 @@ export const CreditColumnstable: ColumnDef<any>[] = [
     enableHiding: false,
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
-      const coupon = row.original;
+      const coupon = row.original; // This will refer to the flattened data
 
       return (
         <div className="gap-2 flex items-center justify-center space-x-2">
-          {/* View Button */}
-          <button
-            className="w-5"
-            onClick={() => {
-              // Implement view logic here
-              console.log("Viewing coupon:", coupon._id);
-            }}
-          >
-            <Eye size={20} />
-          </button>
-
-          {/* Edit Button */}
-          <Link href={`/credit/edit/${coupon._id}`} className="">
+          <Link href={`/credit/edit/${coupon._id}`}>
             <Edit2 size={20} />
           </Link>
 
-          {/* Delete Button */}
           <button
             onClick={() => {
-              // Implement delete logic here
               console.log("Deleting coupon:", coupon._id);
               handleToDeleteSelectedRow(coupon._id);
             }}
@@ -218,6 +216,7 @@ export const CreditColumnstable: ColumnDef<any>[] = [
     },
   },
 ];
+
 const handleToDeleteSelectedRow = async (id: string) => {
   // Use Promise.all to handle multiple deletions concurrently
 

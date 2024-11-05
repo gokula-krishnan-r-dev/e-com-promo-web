@@ -112,9 +112,8 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
     return data;
   };
 
-  const { refetch , isLoading } = useQuery(
-    ["coupon" , filtersC],
-    () => fetchCoupons(filtersC),
+  const { refetch, isLoading } = useQuery(["coupon", filtersC], () =>
+    fetchCoupons(filtersC)
   );
 
   const searchCoupons = (filters: Record<string, any>) => {
@@ -148,7 +147,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
         limit,
         page,
         totalPages,
-        isLoading
+        isLoading,
       }}
     >
       {children}

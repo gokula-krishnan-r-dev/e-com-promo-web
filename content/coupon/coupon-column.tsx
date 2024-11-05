@@ -97,7 +97,9 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
 
     header: () => <div className="text-center">Use Type</div>,
     cell: ({ row }) => (
-      <div className="capitalize">{transformText(row.getValue<string>("useType"))}</div>
+      <div className="capitalize">
+        {transformText(row.getValue<string>("useType"))}
+      </div>
     ),
   },
   {

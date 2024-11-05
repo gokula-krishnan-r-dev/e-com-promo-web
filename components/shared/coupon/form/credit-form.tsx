@@ -40,9 +40,10 @@ import {
 import { useCreditContext } from "@/components/hook/creditContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SearchUser from "../search-user-list";
-import { UserListWithSelect } from "../user-list";
+import UserList, { UserListWithSelect } from "../user-list";
 import { Close } from "@radix-ui/react-dialog";
 import { userFilters } from "@/content/coupon/search-filter";
+import { useQuery } from "react-query";
 // Define types for form data and validation errors
 interface ValidationErrors {
   [key: string]: string;
@@ -58,6 +59,31 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
       method: method === "PUT" ? "PUT" : "POST",
     }
   );
+
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+
+  const { data: users } = useQuery(["users", firstName, lastName], async () => {
+    const params = new URLSearchParams({
+      limit: "1000000000", // You can adjust this value as needed
+    });
+
+    // Adding dynamic filters based on state
+    if (firstName) params.append("filter[firstName]", firstName);
+    if (lastName) params.append("filter[lastName]", lastName);
+
+    const response = await fetch(
+      `https://e-com-promo-api.vercel.app/api/v1/user/list`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
+    }
+
+    const data = await response.json();
+    return data.data;
+  });
+
   const handletoClear = () => {
     setFormData({});
     window.location.reload();
@@ -142,6 +168,16 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
   // Generate a random coupon code
   const generateCouponCode = () => {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
+  };
+  const hanletoChageOpen = (value: string) => {
+    console.log(value, "gokula");
+
+    if (value === "SELECTED") {
+      setIsOpen(true);
+    } else {
+      // Close both if neither condition matches
+      setIsOpen(false);
+    }
   };
 
   const handleCouponMethodChange = (value: string) => {
@@ -407,6 +443,45 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
           );
         }
 
+        // if (field.name === "startDate" && formData.startDate === "2") {
+        //   return (
+        //     <div className="w-full">
+        //       <Popover>
+        //         <PopoverTrigger asChild>
+        //           <Button
+        //             disabled={method === "view"}
+        //             variant={"outline"}
+        //             className={cn(
+        //               "w-full justify-start text-left font-normal",
+        //               !formData[field.name] && "text-muted-foreground"
+        //             )}
+        //           >
+        //             <CalendarIcon className="mr-2 h-4 w-4" />
+        //             {formData[field.name]
+        //               ? format(new Date(formData[field.name] as string), "PPP")
+        //               : "Date Valid From"}
+        //           </Button>
+        //         </PopoverTrigger>
+        //         <PopoverContent className="w-auto p-0">
+        //           <Calendar
+        //             mode="single"
+        //             selected={formData[field.name] as unknown as Date}
+        //             onSelect={(date: Date | undefined) =>
+        //               handleDateChange(date as Date, field.name)
+        //             }
+        //             initialFocus
+        //           />
+        //         </PopoverContent>
+        //       </Popover>{" "}
+        //       {errors[field.name] && (
+        //         <p className="text-red-500 pt-1 text-sm">
+        //           {errors[field.name]}
+        //         </p>
+        //       )}
+        //     </div>
+        //   );
+        // }
+
         return (
           <div key={field.name}>
             <label
@@ -459,27 +534,81 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                     ))}
                   </RadioGroup>
                 ) : field.type === "radio" ? (
-                  <RadioGroup
-                    disabled={method === "view"}
-                    value={formData[field.name] as string}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, [field.name]: value })
-                    }
-                    className="flex space-x-4"
-                  >
-                    {field.options?.map((option) => (
-                      <div
-                        key={option.value}
-                        className="flex items-center space-x-2"
-                      >
-                        <RadioGroupItem
-                          value={option.value}
-                          id={option.value}
-                        />
-                        <Label htmlFor={option.value}>{option.label}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
+                  <div className="flex w-full items-center gap-3">
+                    <RadioGroup
+                      disabled={method === "view"}
+                      value={formData[field.name] as string}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, [field.name]: value });
+                        hanletoChageOpen(formData[field.name]);
+                      }}
+                      className="flex w-full space-x-4"
+                    >
+                      {field.options?.map((option) => (
+                        <div
+                          key={option.value}
+                          className="flex items-center space-x-2"
+                        >
+                          <RadioGroupItem
+                            value={option.value}
+                            id={option.value}
+                          />
+                          <Label
+                            onClick={(value) => {
+                              setFormData({ ...formData, [field.name]: value });
+                              hanletoChageOpen(formData[field.name]);
+                            }}
+                            htmlFor={option.value}
+                          >
+                            {option.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    {field.name === "startDate" &&
+                      formData.startDate === "2" && (
+                        <>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                disabled={method === "view"}
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !formData[field.name] &&
+                                    "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {formData[field.name]
+                                  ? format(
+                                      new Date(formData[field.name] as string),
+                                      "PPP"
+                                    )
+                                  : "Date Valid From"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  formData[field.name] as unknown as Date
+                                }
+                                onSelect={(date: Date | undefined) =>
+                                  handleDateChange(date as Date, field.name)
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>{" "}
+                          {errors[field.name] && (
+                            <p className="text-red-500 pt-1 text-sm">
+                              {errors[field.name]}
+                            </p>
+                          )}
+                        </>
+                      )}
+                  </div>
                 ) : (
                   <input
                     type={field.type}
@@ -558,18 +687,14 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
         );
       })}
 
-      {formData.user === "SELECTED" && (
+      {isOpen && (
         <div className="">
-          <Dialog open={isOpen}>
+          <Dialog open>
             <DialogContent className="sm:max-w-[925px]">
               <DialogHeader>
                 <DialogTitle>
                   Users whose Birthday falls in the September Month
                 </DialogTitle>
-                <DialogDescription>
-                  Make changes to your profile here. Click save when you're
-                  done.
-                </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <ScrollArea className="h-[60vh]">
@@ -577,17 +702,42 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                   <UserListWithSelect
                     setFormData={setFormData}
                     formData={formData}
+                    data={users}
                   />
                 </ScrollArea>
               </div>
-              <DialogFooter>
+              <DialogFooter className="">
+                <div className="flex items-center justify-center w-full gap-4">
+                  <div className="">
+                    <Close
+                      className="text-sm border px-4 py-2 rounded-lg font-semibold"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setFormData({ ...formData, userIds: [] });
+                      }}
+                    >
+                      Cancel
+                    </Close>
+                  </div>
+                  <Close
+                    onClick={() => {
+                      setIsOpen(false);
+                    }}
+                    type="submit"
+                    className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
+                  >
+                    Add
+                  </Close>{" "}
+                </div>
+              </DialogFooter>
+              {/* <DialogFooter>
                 <Close
                   onClick={() => setIsOpen(false)}
                   className="bg-[#316BEB] text-white text-sm px-4 py-2 rounded-lg font-medium"
                 >
                   Save changes
                 </Close>
-              </DialogFooter>
+              </DialogFooter> */}
             </DialogContent>
           </Dialog>
         </div>

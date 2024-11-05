@@ -65,10 +65,10 @@ function Page({ params }: { params: { slug: string } }) {
 // Refactored button into its own reusable component
 const AddCouponButton: React.FC = () => (
   <Link
-    href="/discount/create"
+    href="/coupon"
     className="bg-gradient-to-r from-[#316BEB] to-[#2964ED] text-white px-4 py-2 flex items-center text-sm gap-2 rounded-lg font-semibold"
   >
-    View Discount List
+    View Coupon List
   </Link>
 );
 

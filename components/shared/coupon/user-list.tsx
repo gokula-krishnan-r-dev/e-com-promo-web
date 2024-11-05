@@ -30,7 +30,7 @@ const UserList = ({ setFormData, formData }: any) => {
       if (lastName) params.append("filter[lastName]", lastName);
 
       const response = await fetch(
-        `https://big-backend.vercel.app/v1/users/?userType=registered_user&${params.toString()}`
+        `https://e-com-promo-api.vercel.app/v1/user/list`
       );
 
       if (!response.ok) {
@@ -157,13 +157,13 @@ export const UserListWithSelect = ({ setFormData, formData, data }: any) => {
       // Add user ID to the array
       setFormData({
         ...formData,
-        userIds: [...(formData?.userIds || []), user.id], // Ensure `userIds` is an array
+        userIds: [...(formData?.userIds || []), user._id], // Ensure `userIds` is an array
       });
     } else {
       // Remove user ID from the array
       setFormData({
         ...formData,
-        userIds: formData?.userIds.filter((id: string) => id !== user.id),
+        userIds: formData?.userIds.filter((id: string) => id !== user._id),
       });
     }
   };
@@ -175,11 +175,11 @@ export const UserListWithSelect = ({ setFormData, formData, data }: any) => {
     refetch,
   } = useQuery(["ids"], async () => {
     const response = await fetch(
-      `https://big-backend.vercel.app/v1/users/userIds`
+      `https://e-com-promo-api.vercel.app/api/v1/user/`
     );
 
     const data = await response.json();
-    return data.activeUsers;
+    return data.data;
   });
   console.log(userIds, "userIds");
 
@@ -227,7 +227,7 @@ export const UserListWithSelect = ({ setFormData, formData, data }: any) => {
                 className="border rounded-2xl border-gray-100"
                 name={user.id}
                 id={user.id}
-                checked={formData?.userIds?.includes(user?.id)} // Keep the checkbox checked if the ID is in the array
+                checked={formData?.userIds?.includes(user?._id)} // Keep the checkbox checked if the ID is in the array
                 onChange={(e) => handleCheckboxChange(e, user)}
               />
               <h2 className="text-sm font-semibold">

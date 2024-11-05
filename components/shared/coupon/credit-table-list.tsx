@@ -136,7 +136,7 @@ const CreditTableList = ({ edit }: any) => {
           </div>
         )}
       </div>
-      <div className="">
+      <div className="mt-5">
         <CreditTable data={credits} columns={CreditColumnstable} />
       </div>
     </div>
