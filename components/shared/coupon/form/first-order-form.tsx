@@ -94,7 +94,7 @@ const FirstOrderDiscountForm: React.FC<any> = ({
     "discount",
     async () => {
       const response = await fetch(
-        `https://e-com-promo-api.vercel.app/api/v1/discounts/first-order-discounts`
+        `http://localhost:8080/api/v1/discounts/first-order-discounts`
       );
       const data = await response.json();
       return data.discount;

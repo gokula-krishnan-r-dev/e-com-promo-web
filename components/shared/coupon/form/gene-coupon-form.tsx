@@ -22,15 +22,12 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import { formFields } from "@/content/coupon/gene-form";
-import UserList from "../user-list";
 import { useMutation } from "@/components/hook/useMutation";
 import { toast } from "sonner";
-import { useToast } from "@/lib/toast-manager";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ProductDialog } from "../product-popup";
 import { Singleproduct } from "../single-product-popup";
-import { excludeFields } from "./anniversary-coupon-form";
 // Define types for form data and validation errors
 interface FormData {
   [key: string]: string | number;
@@ -257,7 +254,7 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
         },
         onError: (error) => {
           // Handle the error if the request fails
-          toast.error("Failed to create coupon!");
+          toast.error(error.message || "An error occurred. Please try again.");
           console.error("Error:", error);
         },
       });
@@ -278,8 +275,8 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
           return {
             ...field,
             name: "noOfCoupon",
-            label: "No of Coupon", // Update label
-            placeholder: "Enter number of coupons", // Optional: update placeholder
+            label: "No. of Codes", // Update label
+            placeholder: "Enter No. of Codes", // Optional: update placeholder
           };
         }
         return field;
@@ -481,7 +478,7 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
                               new Date(formData["endDate"] as string),
                               "PPP"
                             )
-                          : "Date Valid From"}
+                          : "Date Valid To"}
                         <CalendarIcon className="mr-2 h-4 w-4" />
                       </Button>
                     </PopoverTrigger>
@@ -586,9 +583,10 @@ const GeneCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
                         <Label
                           htmlFor={option.value}
                           className={`cursor-pointer ${
-                            (formData[field.name] === option.value &&
-                              formData?.categories?.length > 0) ||
-                            formData.product === option.value
+                            field.name === "validOnProducts" &&
+                            formData[field.name] !== "ALL_PRODUCTS" &&
+                            ((formData[field.name] === option.value && formData?.categories?.length > 0) ||
+                              formData.product === option.value)
                               ? "underline"
                               : ""
                           }`}

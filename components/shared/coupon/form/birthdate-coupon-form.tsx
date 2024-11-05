@@ -234,7 +234,7 @@ const BirthdayCouponForm: React.FC<any> = ({ method, defaultValue }: any) => {
         },
         onError: (error) => {
           // Handle the error if the request fails
-          toast.error(`Failed to create coupon! - ${data.error}`);
+          toast.error(`Failed to create coupon! - ${error.message}`);
           console.error("Error:", error);
         },
       });

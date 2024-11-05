@@ -229,7 +229,7 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
     accessorKey: "displayOnSite",
     header: () => <div className="text-center">Display On Site</div>,
     cell: ({ row }) => (
-      <div className="capitalize">
+      <div className="capitalize text-center flex items-center justify-center">
         {row.getValue<string>("displayOnSite") ? (
           <svg
             width="25"
@@ -305,7 +305,7 @@ export const DiscountColumnstable: ColumnDef<any>[] = [
       const coupon = row.original;
 
       return (
-        <div className="flex items-center gap-2 space-x-2">
+        <div className="flex items-center justify-center gap-2 space-x-2">
           {/* Edit Button */}
           <Link
             href={`/discount/edit/${coupon._id}`}
@@ -541,7 +541,7 @@ const handleToDeleteSelectedRow = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `https://e-com-promo-api.vercel.app/api/v1/discounts/${id}`,
+    `http://localhost:8080/api/v1/discounts/${id}`,
     {
       method: "DELETE",
     }
@@ -565,7 +565,7 @@ const handleToDeleteSelected = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `https://e-com-promo-api.vercel.app/api/v1/discounts/firstorder/${id}`,
+    `http://localhost:8080/api/v1/discounts/firstorder/${id}`,
     {
       method: "DELETE",
     }

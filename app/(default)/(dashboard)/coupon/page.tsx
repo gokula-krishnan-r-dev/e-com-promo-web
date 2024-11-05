@@ -12,7 +12,7 @@ const Coupon: React.FC = () => {
   };
 
   return (
-    <main className="px-2 py-2">
+    <main className="mx-4 my-4">
       <HeaderWrapper title="Coupon" button={<AddCouponButton />}>
         <SearchCoupon filters={filters} onSearch={handleSearch} />
         <TableList />

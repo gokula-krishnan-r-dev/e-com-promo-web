@@ -44,7 +44,7 @@ const DynamicTabs: React.FC<DynamicTabsProps> = ({
         </TabsList>
         {tabs.map((tab) => (
           <TabsContent key={tab.value} value={tab.value}>
-            <div className="p-4">{tab.content}</div>
+            <div className="pt-3">{tab.content}</div>
           </TabsContent>
         ))}
       </TabsCom>

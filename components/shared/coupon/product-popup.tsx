@@ -291,10 +291,7 @@ export function ProductDialog({
           <DialogTitle className="text-2xl font-semibold">
             Select Categories
           </DialogTitle>
-          <DialogDescription>
-            Select the categories and subcategories you want to apply the coupon
-            to.
-          </DialogDescription>
+
         </DialogHeader>
         <ScrollArea className="max-h-[400px]">
           <div className="grid gap-6 py-6">

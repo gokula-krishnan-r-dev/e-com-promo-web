@@ -34,6 +34,7 @@ interface CouponContextProps {
   limit: number;
   page: number;
   totalPages: number;
+  isLoading?: boolean;
 }
 
 const CouponContext = createContext<CouponContextProps | undefined>(undefined);
@@ -97,7 +98,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchCoupons = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/coupons?${new URLSearchParams(
+      `http://localhost:8080/api/v1/coupons?${new URLSearchParams(
         filters
       )}`
     );
@@ -111,10 +112,9 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
     return data;
   };
 
-  const { refetch } = useQuery(
-    ["coupon", filtersC],
+  const { refetch , isLoading } = useQuery(
+    ["coupon" , filtersC],
     () => fetchCoupons(filtersC),
-    { keepPreviousData: true }
   );
 
   const searchCoupons = (filters: Record<string, any>) => {
@@ -148,6 +148,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
         limit,
         page,
         totalPages,
+        isLoading
       }}
     >
       {children}

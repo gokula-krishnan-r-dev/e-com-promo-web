@@ -7,6 +7,16 @@ export const filters = [
     placeholder: "Enter coupon code",
   },
   {
+    name: "useType",
+    label: "Coupon Use Type",
+    placeholder: "Select coupon use type",
+    type: "select",
+    options: [
+      { label: "Single use", value: "ONE_TIME" },
+      { label: "Multiple use", value: "MULTIPLE" },
+    ],
+  },
+  {
     name: "validForCountry",
     label: "Valid for Countries",
     placeholder: "Select countries",
@@ -29,16 +39,7 @@ export const filters = [
       { label: "Inactive", value: "INACTIVE" },
     ],
   },
-  {
-    name: "useType",
-    label: "Coupon use type",
-    placeholder: "Select coupon use type",
-    type: "select",
-    options: [
-      { label: "Single use", value: "ONE_TIME" },
-      { label: "Multiple use", value: "MULTIPLE" },
-    ],
-  },
+
   {
     name: "month",
     label: "Birthday / Anniversary Month",

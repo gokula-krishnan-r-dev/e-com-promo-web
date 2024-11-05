@@ -5,11 +5,45 @@ interface CouponDetails {
   label: string;
   value: string;
 }
+/**
+ * Transforms text to capitalize the first letter of each word,
+ * replaces underscores with spaces, and allows customization.
+ *
+ * @param text - The input string to transform.
+ * @param options - Optional configuration for transformations.
+ * @returns The transformed string.
+ */
+export function transformText(
+  text: string,
+  options?: {
+    capitalizeEachWord?: boolean; // Capitalize each word (e.g., "hello world" to "Hello World")
+    replaceUnderscores?: boolean; // Replace underscores with spaces
+  }
+): string {
+  const { capitalizeEachWord = false, replaceUnderscores = true } = options || {};
+if (!text) {
+    return "";
+  }
+  // Step 1: Replace underscores with spaces if enabled
+  let transformedText = replaceUnderscores ? text.replace(/_/g, " ") : text;
+
+  // Step 2: Capitalize based on configuration
+  if (capitalizeEachWord) {
+    transformedText = transformedText
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  } else {
+    // Capitalize only the first letter of the string
+    transformedText = transformedText.charAt(0).toUpperCase() + transformedText.slice(1).toLowerCase();
+  }
+
+  return transformedText;
+}
 
 const ViewCoupon = ({ params }: any) => {
   const { data, error } = useQuery("coupon", async () => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/coupons/${params.slug}`
+      `http://localhost:8080/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
     return data;
@@ -55,7 +89,7 @@ const ViewCoupon = ({ params }: any) => {
   return (
     <div className="px-4 py-6">
       <div className="">
-        <h2 className="mb-8">
+        <h2 className="mb-8 font-normal">
           Details of the Coupon Code -{" "}
           {data?.coupon?.couponMethod === "self"
             ? `${data?.coupon?.couponCode} `
@@ -65,11 +99,11 @@ const ViewCoupon = ({ params }: any) => {
           <tbody>
             {couponDetails.map((detail, index) => (
               <tr key={index} className={`border-b flex`}>
-                <td className="px-6 py-1 text-sm text-end flex-1 font-semibold text-gray-700">
+                <td className="px-6 py-1 text-base text-end flex-1 font-medium text-black">
                   {detail.label}
                 </td>
-                <td className="px-6 capitalize py-1 text-sm border-l flex-1 text-start text-gray-900">
-                  {detail.value}
+                <td className="px-6 capitalize py-1 text-sm border-l flex-1 text-start font-normal text-black">
+                  {transformText(detail.value)}
                 </td>
               </tr>
             ))}
@@ -79,34 +113,34 @@ const ViewCoupon = ({ params }: any) => {
         <div className=" pt-8">
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm border !rounded-xl text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <thead className="text-xs rounded-t-xl text-gray-700 border-b uppercase bg-[#F9FAFB] dark:bg-gray-700 dark:text-gray-400">
+              <thead className="text-xs rounded-t-xl text-gray-700 border-b  bg-[#F9FAFB] dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 text-center py-3">
                     S.No.
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 text-center py-3">
                     Coupon Code
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 text-center py-3">
                     Status
                   </th>
                 </tr>
               </thead>
               <tbody className="">
-                {data?.relatedCoupons.map((coupon: any, index: number) => (
+                {data?.relatedCoupons?.map((coupon: any, index: number) => (
                   <tr
                     key={coupon._id}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    className="bg-white border-b text-sm font-medium dark:bg-gray-800 text-[#4A5367] dark:border-gray-700"
                   >
                     <th
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="px-6 py-4 text-center dark:text-white"
                     >
-                      {index}
+                      {index +1}
                     </th>
-                    <td className="px-6 py-4">{coupon.couponCode}</td>
-                    <td className="px-6 py-4">
-                      {coupon.useCount > 0 ? "unused" : "used"}
+                    <td className="px-6 text-center  py-4">{coupon.couponCode}</td>
+                    <td className="px-6 text-center py-4">
+                      {coupon.useCount >= 0 ? "unused" : "used"}
                     </td>
                   </tr>
                 ))}

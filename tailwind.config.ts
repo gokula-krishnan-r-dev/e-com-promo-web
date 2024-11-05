@@ -12,6 +12,8 @@ const config: Config = {
       colors: {
         background: "var(--background)", // Ensure these variables are defined for light mode
         foreground: "var(--foreground)",
+        'custom-blue-start': '#3872EE',
+        'custom-blue-end': '#2661ED',
       },
       borderRadius: {
         lg: "var(--radius)",

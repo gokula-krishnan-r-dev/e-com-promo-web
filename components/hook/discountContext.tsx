@@ -88,7 +88,7 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchDiscounts = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/discounts?${new URLSearchParams(
+      `http://localhost:8080/api/v1/discounts?${new URLSearchParams(
         filters
       )}`
     );
@@ -109,7 +109,7 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchFirstOrderDiscounts = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/discounts/first-order-discounts?${new URLSearchParams(
+      `http://localhost:8080/api/v1/discounts/first-order-discounts?${new URLSearchParams(
         filters
       )}`
     );

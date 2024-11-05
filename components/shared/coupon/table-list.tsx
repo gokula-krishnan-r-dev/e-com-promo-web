@@ -64,7 +64,7 @@ const TableList = () => {
       // Use Promise.all to handle multiple deletions concurrently
       const deletePromises = ListIds.map(async (id) => {
         const response = await fetch(
-          `https://e-com-promo-api.vercel.app/api/v1/coupons/${id}`,
+          `http://localhost:8080/api/v1/coupons/${id}`,
           {
             method: "DELETE",
           }
@@ -101,7 +101,7 @@ const TableList = () => {
   };
 
   return (
-    <div className="px-6 py-3">
+    <div className="px-2 py-3">
       <div className="flex items-center justify-between py-4 w-full">
         <h2 className="text-base font-semibold">Existing Coupons</h2>
         {selectedRow.size > 0 && (

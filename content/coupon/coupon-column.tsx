@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { isBefore, parseISO } from "date-fns";
 import { toast } from "sonner";
+import { transformText } from "@/components/shared/coupon/view-coupon";
 // Define types for the data
 type CouponData = {
   _id: string;
@@ -18,6 +19,14 @@ type CouponData = {
   startDate: string;
   endDate: string;
   status: string;
+};
+
+const accessorFn = (row: any): string => {
+  const isFlat = row.discountType === "FLAT";
+  const prefix = isFlat ? "$" : "";
+  const suffix = isFlat ? "" : "%";
+
+  return `${prefix}${row.discountValue} ${suffix}`;
 };
 
 // Define columns using strong typing
@@ -47,11 +56,14 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
     enableHiding: false,
   },
   {
+    // i want to add multiple accessorskey discountValue and discountType
     accessorKey: "discountValue",
+    accessorFn,
     header: () => <div className="text-center ">Discount</div>,
     cell: ({ row }) => {
       const discountValue = row.getValue<number>("discountValue");
-      return <div className="text-center font-medium">{discountValue}%</div>;
+      const discountType = row.getValue<string>("discountType");
+      return <div className="text-center font-medium">{discountValue}</div>;
     },
   },
   {
@@ -76,7 +88,7 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
     header: () => <div className="text-center">Country</div>,
     cell: ({ row }) => (
       <div className="capitalize">
-        {row.getValue<string>("validForCountry")}
+        {transformText(row.getValue<string>("validForCountry"))}
       </div>
     ),
   },
@@ -85,7 +97,7 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
 
     header: () => <div className="text-center">Use Type</div>,
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue<string>("useType")}</div>
+      <div className="capitalize">{transformText(row.getValue<string>("useType"))}</div>
     ),
   },
   {
@@ -171,7 +183,7 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
       };
       const couponEditUrl = generateCouponEditUrl(coupon);
       return (
-        <div className="flex items-center gap-2 space-x-2">
+        <div className="flex items-center justify-center gap-2 space-x-2">
           {/* View Button */}
           <Link
             href={"/coupon/view/" + coupon._id}
@@ -216,7 +228,7 @@ const handleToDeleteSelectedRow = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `https://e-com-promo-api.vercel.app/api/v1/coupons/${id}`,
+    `http://localhost:8080/api/v1/coupons/${id}`,
     {
       method: "DELETE",
     }
