@@ -224,7 +224,7 @@ const handleToDeleteSelectedRow = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `http://localhost:8080/api/v1/discounts/${id}`,
+    `https://e-com-promo-api.vercel.app/api/v1/discounts/${id}`,
     {
       method: "DELETE",
     }

@@ -84,7 +84,7 @@ const ProductList = ({
       if (category) queryParams.append("category", category);
 
       const response = await fetch(
-        `http://localhost:8080/api/v1/coupons/products?${queryParams.toString()}`
+        `https://e-com-promo-api.vercel.app/api/v1/coupons/products?${queryParams.toString()}`
       );
 
       if (!response.ok) {

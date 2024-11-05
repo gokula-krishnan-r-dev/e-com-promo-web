@@ -60,7 +60,7 @@ export const useMutation = <T, V>(
         const isFormData = variables instanceof FormData;
 
         const response = await fetch(
-          "http://localhost:8080/api/v1" + url,
+          "https://e-com-promo-api.vercel.app/api/v1" + url,
           {
             ...options,
             method,
