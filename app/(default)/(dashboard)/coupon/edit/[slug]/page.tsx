@@ -15,7 +15,7 @@ function Page({ params }: { params: { slug: string } }) {
   const id = searchParams.get("id");
   const { data, error } = useQuery("coupon", async () => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/coupons/${params.slug}`
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
     return data?.coupon;
@@ -44,7 +44,7 @@ function Page({ params }: { params: { slug: string } }) {
   return (
     <main className="px-6 py-3">
       <div className="">
-        <HeaderWrapper title="Coupon" button={<AddCouponButton />}>
+        <HeaderWrapper title="Edit Coupon" button={<AddCouponButton />}>
           <div className="px-1 w-full py-3">
             <DynamicTabs
               method={"PUT"}

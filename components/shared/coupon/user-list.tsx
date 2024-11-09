@@ -30,7 +30,7 @@ const UserList = ({ setFormData, formData }: any) => {
       if (lastName) params.append("filter[lastName]", lastName);
 
       const response = await fetch(
-        `https://e-com-promo-api.vercel.app/v1/user/list`
+        `https://e-com-promo-api-57xi.vercel.app/v1/user/list`
       );
 
       if (!response.ok) {
@@ -175,7 +175,7 @@ export const UserListWithSelect = ({ setFormData, formData, data }: any) => {
     refetch,
   } = useQuery(["ids"], async () => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/user/`
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/user/`
     );
 
     const data = await response.json();

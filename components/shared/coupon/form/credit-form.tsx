@@ -40,7 +40,7 @@ import {
 import { useCreditContext } from "@/components/hook/creditContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SearchUser from "../search-user-list";
-import UserList, { UserListWithSelect } from "../user-list";
+import { UserListWithSelect } from "../user-list";
 import { Close } from "@radix-ui/react-dialog";
 import { userFilters } from "@/content/coupon/search-filter";
 import { useQuery } from "react-query";
@@ -73,7 +73,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
     if (lastName) params.append("filter[lastName]", lastName);
 
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/user/list`
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/user/list`
     );
 
     if (!response.ok) {
@@ -206,7 +206,17 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
     e.preventDefault();
 
     if (validate()) {
-      mutate(finalList, method === "PUT" ? "PUT" : "POST", {
+      const addDate = {
+        ...finalList,
+        startDate: new Date(),
+        endDate:
+          formData.startDate === "2"
+            ? formData.endDate
+            : // i need to set date for next 30 days from the current date
+              new Date(new Date().setDate(new Date().getDate() + 30)),
+      };
+
+      mutate(addDate, method === "PUT" ? "PUT" : "POST", {
         onSuccess: (response) => {
           refetch();
           // Show a success toast message
@@ -227,7 +237,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 w-full rounded-lg border space-y-5"
+      className="p-4 w-full rounded-lg border space-y-6"
     >
       {creditFormFields.map((field) => {
         if (field.name === "discountType" || field.name === "discountValue") {
@@ -443,45 +453,6 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
           );
         }
 
-        // if (field.name === "startDate" && formData.startDate === "2") {
-        //   return (
-        //     <div className="w-full">
-        //       <Popover>
-        //         <PopoverTrigger asChild>
-        //           <Button
-        //             disabled={method === "view"}
-        //             variant={"outline"}
-        //             className={cn(
-        //               "w-full justify-start text-left font-normal",
-        //               !formData[field.name] && "text-muted-foreground"
-        //             )}
-        //           >
-        //             <CalendarIcon className="mr-2 h-4 w-4" />
-        //             {formData[field.name]
-        //               ? format(new Date(formData[field.name] as string), "PPP")
-        //               : "Date Valid From"}
-        //           </Button>
-        //         </PopoverTrigger>
-        //         <PopoverContent className="w-auto p-0">
-        //           <Calendar
-        //             mode="single"
-        //             selected={formData[field.name] as unknown as Date}
-        //             onSelect={(date: Date | undefined) =>
-        //               handleDateChange(date as Date, field.name)
-        //             }
-        //             initialFocus
-        //           />
-        //         </PopoverContent>
-        //       </Popover>{" "}
-        //       {errors[field.name] && (
-        //         <p className="text-red-500 pt-1 text-sm">
-        //           {errors[field.name]}
-        //         </p>
-        //       )}
-        //     </div>
-        //   );
-        // }
-
         return (
           <div key={field.name}>
             <label
@@ -534,7 +505,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                     ))}
                   </RadioGroup>
                 ) : field.type === "radio" ? (
-                  <div className="flex w-full items-center gap-3">
+                  <div className="flex items-center w-full gap-3">
                     <RadioGroup
                       disabled={method === "view"}
                       value={formData[field.name] as string}
@@ -542,7 +513,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                         setFormData({ ...formData, [field.name]: value });
                         hanletoChageOpen(formData[field.name]);
                       }}
-                      className="flex w-full space-x-4"
+                      className="flex items-center w-[30%] space-x-4"
                     >
                       {field.options?.map((option) => (
                         <div
@@ -567,35 +538,32 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                     </RadioGroup>
                     {field.name === "startDate" &&
                       formData.startDate === "2" && (
-                        <>
+                        <div className="w-full">
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button
                                 disabled={method === "view"}
                                 variant={"outline"}
                                 className={cn(
-                                  "w-full justify-start text-left font-normal",
-                                  !formData[field.name] &&
-                                    "text-muted-foreground"
+                                  "w-full justify-between bg-[#EAEAEB] text-left font-normal",
+                                  !formData.endDate && "text-muted-foreground"
                                 )}
                               >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {formData[field.name]
+                                {formData.endDate
                                   ? format(
-                                      new Date(formData[field.name] as string),
+                                      new Date(formData.endDate as string),
                                       "PPP"
                                     )
-                                  : "Date Valid From"}
+                                  : "mmm dd, yyyy"}
+                                <CalendarIcon className="mr-2 h-4 w-4" />
                               </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-full p-0">
+                            <PopoverContent className=" w-full p-0">
                               <Calendar
                                 mode="single"
-                                selected={
-                                  formData[field.name] as unknown as Date
-                                }
+                                selected={formData.endDate as unknown as Date}
                                 onSelect={(date: Date | undefined) =>
-                                  handleDateChange(date as Date, field.name)
+                                  handleDateChange(date as Date, "endDate")
                                 }
                                 initialFocus
                               />
@@ -606,7 +574,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                               {errors[field.name]}
                             </p>
                           )}
-                        </>
+                        </div>
                       )}
                   </div>
                 ) : (
@@ -651,6 +619,19 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            ) : field.type === "textarea" ? (
+              <div className="">
+                <textarea
+                  cols={30}
+                  rows={5}
+                  id={field.id}
+                  name={field.name}
+                  value={formData[field.name] as string}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className="border p-2 text-sm rounded-lg w-full"
+                />
+              </div>
             ) : (
               <div className="relative flex items-center gap-12">
                 {field.name === "minimumPurchase" && (
@@ -683,10 +664,16 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
             {errors[field.name] && (
               <p className="text-red-500 pt-1 text-sm">{errors[field.name]}</p>
             )}
+
+            {/* {errors["userIds"] && (
+              <p className="text-red-500 pt-1 text-sm">{errors["userIds"]}</p>
+            )} */}
           </div>
         );
       })}
-
+      {errors["userIds"] && (
+        <p className="text-red-500 pt-1 text-sm">{errors["userIds"]}</p>
+      )}
       {isOpen && (
         <div className="">
           <Dialog open>
@@ -742,6 +729,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
           </Dialog>
         </div>
       )}
+
       <div className="flex justify-center items-center px-4 pb-4 gap-4">
         <button
           onClick={handletoClear}

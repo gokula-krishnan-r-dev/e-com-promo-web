@@ -23,6 +23,8 @@ import {
 import { useCreditContext } from "@/components/hook/creditContext";
 import { toast } from "sonner";
 import { CreditColumnstable } from "@/content/credit/credit-content";
+import { cn } from "@/lib/utils";
+import { isBefore, parseISO } from "date-fns";
 
 export function CreditTable({ data, pagination }: any) {
   const { setSelectedRow, setLimit, setPage, limit, page, totalPages } =
@@ -40,14 +42,15 @@ export function CreditTable({ data, pagination }: any) {
     return data
       .map((user: any) =>
         user.creditId.map((credit: any) => ({
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          creditAmount: credit.creditAmount,
-          startDate: credit.startDate,
-          endDate: credit.endDate,
-          status: credit.status,
+          _id: user?._id,
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          email: user?.email,
+          creditAmount: credit?.creditAmount,
+          startDate: credit?.startDate,
+          endDate: credit?.endDate,
+          status: credit?.status,
+          usedAmount: credit?.usedAmount,
         }))
       )
       .flat();
@@ -139,7 +142,18 @@ export function CreditTable({ data, pagination }: any) {
                   if (true) {
                     displayedNames.add(currentFirstName);
                   }
-                  console.log(displayedNames, "displayedNames");
+
+                  const endDate = row.original?.endDate
+                    ? parseISO(row.original.endDate)
+                    : null;
+                  const currentDate = new Date();
+
+                  // Determine if the row is inactive based on date comparison
+                  const isInactive = endDate && isBefore(endDate, currentDate);
+                  const ammount = row.original?.creditAmount;
+                  // Determine the color to apply based on status
+                  const usedAmount = row.original?.usedAmount;
+                  const isActive = ammount <= usedAmount;
                   return (
                     <>
                       {shouldDisplayFirstName && (
@@ -156,6 +170,12 @@ export function CreditTable({ data, pagination }: any) {
                         </TableRow>
                       )}
                       <TableRow
+                        className={cn(
+                          isInactive || isActive
+                            ? "bg-gray-100 cursor-not-allowed"
+                            : "", // Apply bg-gray-100 if inactive
+                          row.getIsSelected() ? "selected-row-class" : "" // Apply selected class if row is selected
+                        )}
                         key={row.id}
                         data-state={row.getIsSelected() && "selected"}
                       >

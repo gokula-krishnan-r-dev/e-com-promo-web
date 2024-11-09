@@ -67,7 +67,7 @@ export const creditFormFields: FormField[] = [
   {
     name: "status",
     type: "radio",
-    label: "Status",
+    label: "Credit Status",
     id: "status",
     options: [
       { value: "ACTIVE", label: "Active" },
@@ -80,7 +80,7 @@ export const creditFormFields: FormField[] = [
   },
   {
     name: "remarks",
-    type: "text",
+    type: "textarea",
     label: "Remarks",
     id: "remarks",
     placeholder: "Enter remarks",
@@ -96,9 +96,18 @@ export const creditFormFields: FormField[] = [
 export const creditFormValidation = Joi.object({
   creditAmount: Joi.number().required().label("Credit Amount"),
   startDate: Joi.date().required().label("Start Date"),
-  endDate: Joi.date().required().label("End Date"),
+  endDate: Joi.date().optional().label("End Date"),
   user: Joi.string().required().label("User"),
-  userIds: Joi.array().items(Joi.string()).label("User IDs"),
+  userIds: Joi.array()
+    .items(Joi.string())
+    .when("user", {
+      is: "ALL",
+      then: Joi.optional(),
+      otherwise: Joi.array().min(1).required().messages({
+        "array.min": "Select at least one user when User is not 'ALL'.",
+        "any.required": "User IDs are required when User is not 'ALL'.",
+      }),
+    }),
   status: Joi.string().required().label("Status"),
   remarks: Joi.string().required().min(3).max(100).label("Remarks"),
 });
@@ -139,7 +148,7 @@ export const CreditColumnstable: ColumnDef<any>[] = [
     accessorKey: "usedAmount",
     header: () => <div className="text-center pl-4">Used Amount</div>,
     cell: ({ row }) => {
-      const creditAmount = row.getValue<number>("usedAmount") || 0;
+      const creditAmount = row.getValue<number>("usedAmount");
       return (
         <div className="text-center pl-4 font-medium">${creditAmount}</div>
       );
@@ -147,11 +156,16 @@ export const CreditColumnstable: ColumnDef<any>[] = [
   },
   {
     accessorKey: "startDate",
+    accessorFn: (row) => {
+      const startDate = row.startDate;
+      const endDate = row.endDate;
+      return formatDateRange(startDate, endDate);
+    },
     header: () => <div className="text-center ">Credit Validity</div>,
     cell: ({ row }) => {
       const startDate = row.getValue<string>("startDate");
       const endDate = row.getValue<string>("endDate");
-      return <div>{formatDateRange(startDate, endDate)}</div>;
+      return <div>{startDate}</div>;
     },
   },
   {
@@ -183,8 +197,8 @@ export const CreditColumnstable: ColumnDef<any>[] = [
               <circle cx="3" cy="3" r="3" fill={statusColor} />
             </svg>
             {/* Capitalize first letter of the status */}
-            {status.charAt(0).toUpperCase() +
-              status.slice(1).toLocaleLowerCase()}
+            {status?.charAt(0).toUpperCase() +
+              status?.slice(1).toLocaleLowerCase()}
           </div>
         </div>
       );
@@ -196,17 +210,24 @@ export const CreditColumnstable: ColumnDef<any>[] = [
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
       const coupon = row.original; // This will refer to the flattened data
+      const isVisibile = row.original?.usedAmount;
+      const id = row.original?._id;
+      console.log(id, "id");
+
+      if (isVisibile) {
+        return null;
+      }
 
       return (
         <div className="gap-2 flex items-center justify-center space-x-2">
-          <Link href={`/credit/edit/${coupon._id}`}>
+          <Link href={`/credit/edit/${id}`}>
             <Edit2 size={20} />
           </Link>
 
           <button
             onClick={() => {
-              console.log("Deleting coupon:", coupon._id);
-              handleToDeleteSelectedRow(coupon._id);
+              console.log("Deleting coupon:", id);
+              handleToDeleteSelectedRow(id);
             }}
           >
             <Trash2 size={20} />
@@ -223,7 +244,7 @@ const handleToDeleteSelectedRow = async (id: string) => {
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(
-    `https://e-com-promo-api.vercel.app/api/v1/discounts/${id}`,
+    `https://e-com-promo-api-57xi.vercel.app/api/v1/credit/${id}`,
     {
       method: "DELETE",
     }

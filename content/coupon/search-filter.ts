@@ -80,7 +80,7 @@ export const discountFilters = [
     symbol: "%",
   },
   {
-    name: "validForCountry",
+    name: "validCountry",
     label: "Valid for Countries",
     placeholder: "Select ",
     type: "select",

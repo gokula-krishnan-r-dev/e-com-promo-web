@@ -12,7 +12,7 @@ const HeaderWrapper: React.FC<HeaderWrapperProps> = ({
   title,
 }) => {
   return (
-    <div className="border px-3 py-2 rounded-lg bg-white border-[#D7D7D7]">
+    <div className="border px-3 mx-4 my-4 py-2 rounded-lg bg-white border-[#D7D7D7]">
       <div>
         <div className="flex items-center border-b  justify-between w-full px-2 py-2 ">
           <h1 className="text-black text-xl font-semibold px-3 py-3">

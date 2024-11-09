@@ -46,7 +46,7 @@ export function transformText(
 const ViewCoupon = ({ params }: any) => {
   const { data, error } = useQuery("coupon", async () => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/coupons/${params.slug}`
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons/${params.slug}`
     );
     const data = await response.json();
     return data;

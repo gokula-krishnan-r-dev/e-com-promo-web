@@ -98,7 +98,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchCoupons = async (filters: Record<string, any>) => {
     const response = await fetch(
-      `https://e-com-promo-api.vercel.app/api/v1/coupons?${new URLSearchParams(
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/coupons?${new URLSearchParams(
         filters
       )}`
     );
