@@ -226,7 +226,13 @@ export const CouponColumnstable: ColumnDef<CouponData>[] = [
 ];
 const handleToDeleteSelectedRow = async (id: string) => {
   // Use Promise.all to handle multiple deletions concurrently
+  if (!confirm("Are you sure you want to delete this coupon?")) {
+    return;
+  }
 
+  if (!id) {
+    toast.error("No coupon selected");
+  }
   toast.info("Deleting selected Discount...");
 
   const response = await fetch(

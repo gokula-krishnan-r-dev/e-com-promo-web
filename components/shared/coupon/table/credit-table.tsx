@@ -46,6 +46,7 @@ export function CreditTable({ data, pagination }: any) {
           firstName: user?.firstName,
           lastName: user?.lastName,
           email: user?.email,
+          creditId: credit?._id,
           creditAmount: credit?.creditAmount,
           startDate: credit?.startDate,
           endDate: credit?.endDate,
@@ -74,14 +75,15 @@ export function CreditTable({ data, pagination }: any) {
       rowSelection,
     },
   });
-
   React.useEffect(() => {
-    const selectedRowsArray: any = table.getSelectedRowModel().rows;
-    const newSelectedIds = selectedRowsArray
-      .map((row: any) => row.original?._id)
-      .filter(Boolean);
-    setSelectedRow(new Set(newSelectedIds));
-  }, [table.getSelectedRowModel().rows]);
+    if (rowSelection) {
+      const selectedRow = table?.getSelectedRowModel()?.rows;
+      console.log(selectedRow, "selectedRow");
+
+      const ids = selectedRow.map((row: any) => row.original?._id);
+      setSelectedRow(ids);
+    }
+  }, [rowSelection]); // Only re-run when `table` changes (i.e., when the table is fully initialized)
 
   const handleToPreviewPage = () => {
     if (page > 1) {

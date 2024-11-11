@@ -18,29 +18,26 @@ const UserList = ({ setFormData, formData }: any) => {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
 
-  const { data, error, isLoading, refetch } = useQuery(
-    ["users", firstName, lastName],
-    async () => {
-      const params = new URLSearchParams({
-        limit: "1000000000", // You can adjust this value as needed
-      });
+  const { data, error } = useQuery(["users", firstName, lastName], async () => {
+    const params = new URLSearchParams({
+      limit: "1000000000", // You can adjust this value as needed
+    });
 
-      // Adding dynamic filters based on state
-      if (firstName) params.append("filter[firstName]", firstName);
-      if (lastName) params.append("filter[lastName]", lastName);
+    // Adding dynamic filters based on state
+    if (firstName) params.append("filter[firstName]", firstName);
+    if (lastName) params.append("filter[lastName]", lastName);
 
-      const response = await fetch(
-        `https://e-com-promo-api-57xi.vercel.app/v1/user/list`
-      );
+    const response = await fetch(
+      `https://e-com-promo-api-57xi.vercel.app/api/v1/user/list`
+    );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-
-      const data = await response.json();
-      return data.results;
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
     }
-  );
+
+    const data = await response.json();
+    return data.data;
+  });
   const [isOpen, setIsOpen] = React.useState(false);
   const handleSearch = (values: Record<string, string>) => {
     console.log("Search Values:", values);

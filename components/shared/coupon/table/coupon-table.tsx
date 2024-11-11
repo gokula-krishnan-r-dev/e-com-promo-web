@@ -28,12 +28,14 @@ import { CouponColumnstable } from "@/content/coupon/coupon-column";
 import { useCouponContext } from "@/components/hook/CouponContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import Loading from "@/components/ui/loading";
 
 export function CouponTable({ data, filter, columns }: any) {
   const {
     setFilters,
     filtersC,
     rowSelection,
+    selectedRow,
     setRowSelection,
     setSelectedRow,
     setLimit,
@@ -41,6 +43,7 @@ export function CouponTable({ data, filter, columns }: any) {
     limit,
     page,
     totalPages,
+    isLoading,
   } = useCouponContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -56,9 +59,10 @@ export function CouponTable({ data, filter, columns }: any) {
       filter: filter,
     });
   }, [filter]);
+  console.log(selectedRow, "selectedRow");
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns: columns || CouponColumnstable,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -75,23 +79,18 @@ export function CouponTable({ data, filter, columns }: any) {
       rowSelection,
     },
   });
+  console.log(rowSelection, "rowSelection");
+
+  // console.log(table?.getSelectedRowModel()?.rowsById, "table");
 
   React.useEffect(() => {
-    const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+    if (rowSelection) {
+      const selectedRow = table?.getSelectedRowModel()?.rows;
 
-    if (selectedRowsArray && selectedRowsArray.length > 0) {
-      // Loop through selected rows and get their MongoDB `_id` fields
-      const newSelectedIds = selectedRowsArray
-        .map((row: any) => row.original?._id)
-        .filter(Boolean);
-
-      // Update selected rows list, adding or removing IDs to maintain uniqueness
-      setSelectedRow(new Set(newSelectedIds));
-    } else {
-      // If no rows are selected, reset the selected rows state
-      setSelectedRow([]);
+      const ids = selectedRow.map((row: any) => row.original._id);
+      setSelectedRow(ids);
     }
-  }, [table?.getSelectedRowModel().rows]);
+  }, [rowSelection]); // Only re-run when `table` changes (i.e., when the table is fully initialized)
 
   const handltoPreviewPage = () => {
     if (page > 1) {
@@ -108,6 +107,10 @@ export function CouponTable({ data, filter, columns }: any) {
       toast.error("No more pages to load");
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full">

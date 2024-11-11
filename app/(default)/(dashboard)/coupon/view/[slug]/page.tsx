@@ -6,7 +6,7 @@ import React from "react";
 
 function Page({ params }: { params: { slug: string } }) {
   return (
-    <main className="px-6 py-3">
+    <main className="px-6 py-3" id="coupon-content">
       <div className="">
         <HeaderWrapper title="View Coupon" button={<ViewCouponButton />}>
           <div className="px-1 w-full py-3">

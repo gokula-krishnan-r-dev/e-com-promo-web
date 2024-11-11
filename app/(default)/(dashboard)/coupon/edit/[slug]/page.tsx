@@ -4,6 +4,7 @@ import BirthdayCouponForm from "@/components/shared/coupon/form/birthdate-coupon
 import GeneCouponForm from "@/components/shared/coupon/form/gene-coupon-form";
 import HeaderWrapper from "@/components/shared/coupon/header-wrapper";
 import DynamicTabs from "@/components/shared/coupon/tabs";
+import Loading from "@/components/ui/loading";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -22,7 +23,7 @@ function Page({ params }: { params: { slug: string } }) {
   });
 
   if (error) return <div>Something went wrong...</div>;
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <Loading />;
   const tabData = [
     {
       label: "General Coupons",

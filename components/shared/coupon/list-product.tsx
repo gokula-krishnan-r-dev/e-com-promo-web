@@ -1,3 +1,4 @@
+import Loading from "@/components/ui/loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -112,7 +113,7 @@ const ProductList = ({
     );
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (isError) return <div>Error loading products</div>;
 
   return (

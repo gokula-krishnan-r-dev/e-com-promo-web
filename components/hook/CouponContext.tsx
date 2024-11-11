@@ -73,8 +73,7 @@ const validateCouponSearch = Joi.object({
 export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [rowSelection, setRowSelection] = useState<Record<string, any>>({});
+  const [rowSelection, setRowSelection] = useState<any>(new Set("45345345345"));
   const [selectedRow, setSelectedRow] = useState<any>(new Set());
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -107,14 +106,15 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     const data = await response.json();
 
-    setCoupons(data.data);
     setTotalPages(data?.pagination?.totalPages);
-    return data;
+    return data.data;
   };
 
-  const { refetch, isLoading } = useQuery(["coupon", filtersC], () =>
-    fetchCoupons(filtersC)
-  );
+  const {
+    refetch,
+    isLoading,
+    data: coupons,
+  } = useQuery(["coupon", filtersC], () => fetchCoupons(filtersC));
 
   const searchCoupons = (filters: Record<string, any>) => {
     const { error, value } = validateCouponSearch.validate(filters);

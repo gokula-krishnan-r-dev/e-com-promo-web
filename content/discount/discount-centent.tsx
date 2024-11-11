@@ -53,8 +53,8 @@ export const discountFormFields: FormField[] = [
     label: "Display On Site",
     id: "displayOnSite",
     options: [
-      { value: "true", label: "Yes" },
-      { value: "false", label: "No" },
+      { value: true, label: "Yes" },
+      { value: false, label: "No" },
     ],
     required: true,
     validation: {

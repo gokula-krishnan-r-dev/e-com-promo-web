@@ -30,6 +30,8 @@ interface DiscountContextProps {
   page: number;
   totalPages: number;
   firstOrderDiscounts: any;
+  isLoading: boolean;
+  isDiscountLoading: boolean;
 }
 
 const DiscountContext = createContext<DiscountContextProps | undefined>(
@@ -64,7 +66,7 @@ const validateDiscountSearch = Joi.object({
 export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [discounts, setDiscounts] = useState<Discount[]>([]);
+  // const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectedRow, setSelectedRow] = React.useState<any>(new Set());
   const [page, setPage] = useState<number>(1);
@@ -96,12 +98,15 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error("Failed to fetch discounts");
     }
     const data = await response.json();
-    setDiscounts(data.discounts);
     setTotalPages(data?.pagination?.totalPages);
-    return data;
+    return data.discounts;
   };
 
-  const { refetch } = useQuery(
+  const {
+    refetch,
+    data: discounts,
+    isLoading: isDiscountLoading,
+  } = useQuery(
     ["discount", { page: filtersD.page, limit: filtersD.limit }],
     () => fetchDiscounts(filtersD),
     { keepPreviousData: true }
@@ -121,7 +126,7 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
     return data.discount;
   };
 
-  const { data: firstOrderDiscounts } = useQuery(
+  const { data: firstOrderDiscounts, isLoading } = useQuery(
     ["firstOrderDiscounts", { page: filtersD.page, limit: filtersD.limit }],
     () => fetchFirstOrderDiscounts(filtersD),
     { keepPreviousData: true }
@@ -159,6 +164,8 @@ export const DiscountProvider: React.FC<{ children: React.ReactNode }> = ({
         page,
         totalPages,
         firstOrderDiscounts,
+        isLoading,
+        isDiscountLoading,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 "use client";
 import DiscountForm from "@/components/shared/coupon/form/discount-form";
 import HeaderWrapper from "@/components/shared/coupon/header-wrapper";
+import Loading from "@/components/ui/loading";
 import Link from "next/link";
 import React from "react";
 import { useQuery } from "react-query";
@@ -15,7 +16,7 @@ function Page({ params }: { params: { slug: string } }) {
   });
 
   if (error) return <div>Something went wrong...</div>;
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <Loading />;
 
   return (
     <main className="px-6 py-3">
@@ -33,7 +34,7 @@ function Page({ params }: { params: { slug: string } }) {
 // Refactored button into its own reusable component
 const AddCouponButton: React.FC = () => (
   <Link
-    href="/discount/create"
+    href="/discount"
     className="bg-gradient-to-r from-[#316BEB] to-[#2964ED] text-white px-4 py-2 flex items-center text-sm gap-2 rounded-lg font-semibold"
   >
     View Discount List

@@ -421,6 +421,7 @@ const DiscountForm: React.FC<any> = ({ defaultValue, method }: any) => {
                 {" "}
                 {field.type === "radio" && field.name === "couponMethod" ? (
                   <RadioGroup
+                    value={formData[field.name] as string}
                     disabled={method === "view"}
                     onValueChange={(value) => {
                       setFormData({ ...formData, [field.name]: value });
@@ -541,12 +542,12 @@ const DiscountForm: React.FC<any> = ({ defaultValue, method }: any) => {
         );
       })}
       <div className="flex justify-center items-center px-4 pb-4 gap-4">
-        <button
+        <div
           onClick={handletoClear}
-          className="px-4 py-2 rounded-lg border text-sm font-medium"
+          className="px-4 py-2 rounded-lg cursor-pointer border text-sm font-medium"
         >
           Clear
-        </button>
+        </div>
         <Button
           variant={"default"}
           isLoading={isLoading || method === "view"}

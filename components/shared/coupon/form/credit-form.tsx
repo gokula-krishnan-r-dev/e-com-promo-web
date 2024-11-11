@@ -634,7 +634,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
               </div>
             ) : (
               <div className="relative flex items-center gap-12">
-                {field.name === "minimumPurchase" && (
+                {field.name === "creditAmount" && (
                   <span className="absolute top-2 left-3">$</span>
                 )}
 
@@ -652,7 +652,7 @@ const CreditForm: React.FC<any> = ({ defaultValue, method }: any) => {
                   placeholder={field.placeholder}
                   className={`placeholder:text-[#667085] border rounded-lg py-2.5 w-full px-4 text-sm ${
                     errors[field.name] ? "border-red-500" : "border-gray-300"
-                  } ${field.name === "minimumPurchase" ? "pl-8" : ""}`}
+                  } ${field.name === "creditAmount" ? "pl-8" : ""}`}
                 />
                 {field.name === "minimumPurchase" && (
                   <p className="text-red-500 w-full font-semibold text-xs mt-1">

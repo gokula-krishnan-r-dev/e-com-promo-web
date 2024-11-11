@@ -111,16 +111,7 @@ export const CreditProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Function to search credits based on filters
   const searchCredits = (filters: Record<string, any>) => {
-    const { error, value } = validateCreditSearch.validate(filters);
-    if (error) {
-      error.details.forEach((err) => toast.error(err.message));
-      console.error(
-        "Invalid search query:",
-        error.details.map((err) => err.message)
-      );
-      return;
-    }
-    setFilters(value);
+    setFilters(filters);
     refetch();
   };
 

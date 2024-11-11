@@ -1,15 +1,14 @@
-import { Button } from "@/components/ui/button";
-
+"use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function TabsCom({ children, defaultValue }: any) {
+export function TabsCom({ children, defaultValue, onchange }: any) {
   return (
     <Tabs defaultValue={defaultValue} className="w-full">
       {children}
     </Tabs>
   );
 }
-import React, { useEffect } from "react";
+import React from "react";
 
 interface Tab {
   label: string;
@@ -21,12 +20,14 @@ interface DynamicTabsProps {
   defaultValue: string;
   tabs: Tab[];
   method?: string;
+  router?: any;
 }
 
 const DynamicTabs: React.FC<DynamicTabsProps> = ({
   defaultValue,
   tabs,
   method,
+  router,
 }) => {
   return (
     <div className="w-full">
@@ -37,6 +38,13 @@ const DynamicTabs: React.FC<DynamicTabsProps> = ({
               disabled={method && defaultValue !== tab.value ? true : false}
               key={tab.value}
               value={tab.value}
+              onClick={() => {
+                if (router) {
+                  router.push(`?tab=${tab.value}`);
+                } else {
+                  return;
+                }
+              }}
             >
               {tab.label}
             </TabsTrigger>

@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { isBefore, parseISO } from "date-fns";
 import { useDiscountContext } from "@/components/hook/discountContext";
 import { toast } from "sonner";
+import Loading from "@/components/ui/loading";
 
 export function DiscountTable({ data, columns }: any) {
   const {
@@ -38,6 +39,8 @@ export function DiscountTable({ data, columns }: any) {
     limit,
     page,
     totalPages,
+    isLoading,
+    isDiscountLoading,
   } = useDiscountContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -46,7 +49,7 @@ export function DiscountTable({ data, columns }: any) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const table = useReactTable({
-    data,
+    data: data || [],
     columns: columns || CouponColumnstable,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -63,24 +66,35 @@ export function DiscountTable({ data, columns }: any) {
       rowSelection,
     },
   });
-
   React.useEffect(() => {
-    const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+    if (rowSelection) {
+      const selectedRow = table?.getSelectedRowModel()?.rows;
 
-    if (selectedRowsArray) {
-      // Loop through selected rows and get their MongoDB `_id` fields
-      const newSelectedIds = selectedRowsArray
-        .map((row: any) => row.original?._id)
-        .filter(Boolean);
-
-      console.log(newSelectedIds, "selectedRowsArray");
-      // Update selected rows list, adding or removing IDs to maintain uniqueness
-      setSelectedRow(new Set(newSelectedIds));
-    } else {
-      // If no rows are selected, reset the selected rows state
-      setSelectedRow([]);
+      const ids = selectedRow.map((row: any) => row.original._id);
+      setSelectedRow(ids);
     }
-  }, [table?.getSelectedRowModel().rows]);
+  }, [rowSelection]); // Only re-run when `table` changes (i.e., when the table is fully initialized)
+
+  if (isDiscountLoading) {
+    return <Loading />;
+  }
+  // React.useEffect(() => {
+  //   const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+
+  //   if (selectedRowsArray) {
+  //     // Loop through selected rows and get their MongoDB `_id` fields
+  //     const newSelectedIds = selectedRowsArray
+  //       .map((row: any) => row.original?._id)
+  //       .filter(Boolean);
+
+  //     console.log(newSelectedIds, "selectedRowsArray");
+  //     // Update selected rows list, adding or removing IDs to maintain uniqueness
+  //     setSelectedRow(new Set(newSelectedIds));
+  //   } else {
+  //     // If no rows are selected, reset the selected rows state
+  //     setSelectedRow([]);
+  //   }
+  // }, [table?.getSelectedRowModel().rows]);
 
   const handltoPreviewPage = () => {
     if (page > 1) {
@@ -97,6 +111,7 @@ export function DiscountTable({ data, columns }: any) {
       toast.error("No more pages to load");
     }
   };
+
   return (
     <div className="w-full">
       <div className="rounded-xl border">

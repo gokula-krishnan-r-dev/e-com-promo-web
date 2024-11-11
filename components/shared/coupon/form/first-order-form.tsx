@@ -35,6 +35,7 @@ import { useQuery } from "react-query";
 import SearchUser from "../search-user-list";
 import { UserListWithSelect } from "../user-list";
 import { userFilters } from "@/content/coupon/search-filter";
+import Loading from "@/components/ui/loading";
 export const excludeFields = [
   "_id",
   "__v",
@@ -65,14 +66,16 @@ const FirstOrderDiscountForm: React.FC<any> = ({
   const { data: user, refetch } = useQuery(
     ["users", firstName, lastName],
     async () => {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({
+        limit: "1000000000", // You can adjust this value as needed
+      });
 
-      // Add dynamic filters based on state
+      // Adding dynamic filters based on state
       if (firstName) params.append("filter[firstName]", firstName);
       if (lastName) params.append("filter[lastName]", lastName);
 
       const response = await fetch(
-        `https://big-backend.vercel.app/v1/users/?userType=registered_user&${params.toString()}&filter[status]=active`
+        `https://e-com-promo-api-57xi.vercel.app/api/v1/user/list`
       );
 
       if (!response.ok) {
@@ -80,10 +83,9 @@ const FirstOrderDiscountForm: React.FC<any> = ({
       }
 
       const data = await response.json();
-      return data.results;
+      return data.data;
     }
   );
-
   const [isOpen, setIsOpen] = React.useState(false);
   const handleSearch = (values: Record<string, string>) => {
     console.log("Search Values:", values);
@@ -216,7 +218,7 @@ const FirstOrderDiscountForm: React.FC<any> = ({
           if (response.status === 201 || response.status === 200) {
             // Show a success toast message
             toast.success("Coupon created successfully!");
-            router.back();
+            router.push("/discount?tab=first_order_discount");
           }
         },
         onError: (error) => {
@@ -228,7 +230,7 @@ const FirstOrderDiscountForm: React.FC<any> = ({
     }
   };
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
   return (
     <form

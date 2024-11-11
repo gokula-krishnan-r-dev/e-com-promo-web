@@ -26,17 +26,20 @@ import { cn } from "@/lib/utils";
 import { isBefore, parseISO } from "date-fns";
 import { useDiscountContext } from "@/components/hook/discountContext";
 import { toast } from "sonner";
+import Loading from "@/components/ui/loading";
 
 export function FirstOrderDiscount({ data, columns }: any) {
   const {
     setSelectedRow,
     setRowSelection,
     rowSelection,
+    selectedRow,
     setLimit,
     setPage,
     limit,
     page,
     totalPages,
+    isLoading,
   } = useDiscountContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -47,7 +50,7 @@ export function FirstOrderDiscount({ data, columns }: any) {
   console.log(data, "data");
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns: columns || CouponColumnstable,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -66,22 +69,30 @@ export function FirstOrderDiscount({ data, columns }: any) {
   });
 
   React.useEffect(() => {
-    const selectedRowsArray: any = table?.getSelectedRowModel().rows;
+    if (rowSelection) {
+      const selectedRow = table?.getSelectedRowModel()?.rows;
 
-    if (selectedRowsArray) {
-      // Loop through selected rows and get their MongoDB `_id` fields
-      const newSelectedIds = selectedRowsArray
-        .map((row: any) => row.original?._id)
-        .filter(Boolean);
-
-      console.log(newSelectedIds, "selectedRowsArray");
-      // Update selected rows list, adding or removing IDs to maintain uniqueness
-      setSelectedRow(new Set(newSelectedIds));
-    } else {
-      // If no rows are selected, reset the selected rows state
-      setSelectedRow([]);
+      const ids = selectedRow.map((row: any) => row.original._id);
+      setSelectedRow(ids);
     }
-  }, [table?.getSelectedRowModel().rows]);
+  }, [rowSelection]); // Only re-run when `table` changes (i.e., when the table is fully initialized)
+
+  // React.useEffect(() => {
+  //   const selectedRowModel = table.getSelectedRowModel();
+
+  //   // Check if selectedRowModel and rows exist before proceeding
+  //   if (selectedRowModel?.rows?.length) {
+  //     const newSelectedIds = selectedRowModel.rows
+  //       .map((row: any) => row.original?._id)
+  //       .filter(Boolean);
+
+  //     console.log(newSelectedIds, "selectedRowsArray");
+  //     setSelectedRow(new Set(newSelectedIds));
+  //   } else {
+  //     // If no rows are selected or if selectedRowModel is undefined, reset selected rows state
+  //     setSelectedRow([]);
+  //   }
+  // }, [table?.getSelectedRowModel()?.rows]);
 
   const handltoPreviewPage = () => {
     if (page > 1) {
@@ -98,6 +109,11 @@ export function FirstOrderDiscount({ data, columns }: any) {
       toast.error("No more pages to load");
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className="w-full">
       <div className="rounded-xl border">

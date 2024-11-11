@@ -1,6 +1,7 @@
 "use client";
 import CreditForm from "@/components/shared/coupon/form/credit-form";
 import HeaderWrapper from "@/components/shared/coupon/header-wrapper";
+import Loading from "@/components/ui/loading";
 import Link from "next/link";
 import React from "react";
 import { useQuery } from "react-query";
@@ -15,7 +16,7 @@ function Page({ params }: { params: { slug: string } }) {
   });
 
   if (error) return <div>Something went wrong...</div>;
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <Loading />;
 
   return (
     <main className="px-6 py-3">

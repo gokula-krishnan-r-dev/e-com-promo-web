@@ -1,4 +1,5 @@
 "use client";
+import Loading from "@/components/ui/loading";
 import React from "react";
 import { useQuery } from "react-query";
 interface CouponDetails {
@@ -53,7 +54,7 @@ const ViewCoupon = ({ params }: any) => {
   });
 
   if (error) return <div>Something went wrong...</div>;
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <Loading />;
   const couponDetails: CouponDetails[] = [
     { label: "Coupon Type", value: data?.coupon?.couponTypeDiscount || "-" },
     { label: "Generate By", value: "Auto" }, // Assuming this is static

@@ -36,9 +36,24 @@ const SearchCredit: React.FC<SearchCouponProps> = ({ filters, onSearch }) => {
   };
 
   const handleReset = () => {
-    setFormValues({});
-    setFilters({});
+    setFilters((prevFilters: any) => {
+      const updatedFilters = { ...prevFilters };
+
+      // Reset only keys present in formValues
+      Object.keys(formValues).forEach((key) => {
+        const value = formValues[key];
+        if (key in updatedFilters) {
+          // i want to remove that key and value as well
+          delete updatedFilters[key];
+        }
+      });
+
+      return updatedFilters;
+    });
+
     refetch();
+
+    setFormValues({});
   };
 
   return (
