@@ -69,6 +69,8 @@ const DiscountTableList = ({ edit }: any) => {
           }
         );
 
+        
+
         // Check for errors
         if (!response.ok) {
           const error = await response.json();
